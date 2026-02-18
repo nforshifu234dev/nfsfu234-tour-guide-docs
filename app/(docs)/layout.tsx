@@ -1,3 +1,4 @@
+// app\(docs)\layout.tsx
 import FooterDocs from '@/components/layout/Footer/FooterDocs'
 import { Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { getPageMap } from 'nextra/page-map'
