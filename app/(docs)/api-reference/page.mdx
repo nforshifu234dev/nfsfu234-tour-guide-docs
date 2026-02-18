@@ -1,0 +1,438 @@
+---
+title: API Reference
+description: Complete props, types, and configuration options for nfsfu234-tour-guide.
+keywords: [api reference, props, types, configuration, TourStep, ThemeConfig]
+---
+
+# API Reference
+
+Complete reference for all props, interfaces, and types in **NFSFU234TourGuide**.
+
+---
+
+## Tour Component Props
+
+### Core Props
+
+#### `steps` (required)
+- **Type:** `TourStep[]`
+- **Description:** Array of tour steps defining the tour flow
+
+```tsx
+const steps = [
+  {
+    target: '#hero',
+    content: 'Welcome message',
+    position: 'bottom',
+  },
+];
+```
+
+#### `isActive`
+- **Type:** `boolean`
+- **Default:** `true`
+- **Description:** Controls tour visibility
+
+```tsx
+<Tour isActive={showTour} steps={steps} />
+```
+
+#### `theme`
+- **Type:** `'light' | 'dark' | 'custom'`
+- **Default:** `'dark'`
+- **Description:** Visual theme preset
+
+```tsx
+<Tour theme="dark" steps={steps} />
+<Tour theme="light" steps={steps} />
+<Tour theme="custom" customTheme={{...}} steps={steps} />
+```
+
+#### `accentColor`
+- **Type:** `string`
+- **Default:** `'#10b981'`
+- **Description:** Primary color for buttons and progress bar
+
+```tsx
+<Tour accentColor="#3b82f6" steps={steps} />
+```
+
+---
+
+### Theme Customization
+
+#### `customTheme`
+- **Type:** `ThemeConfig`
+- **Description:** Override default theme with custom colors
+
+```tsx
+<Tour
+  theme="custom"
+  customTheme={{
+    backdrop: 'rgba(0, 0, 0, 0.85)',
+    tooltipBg: '#1e293b',
+    tooltipText: '#f1f5f9',
+    tooltipBorder: '#475569',
+    buttonBg: '#334155',
+    buttonText: '#ffffff',
+    progressBar: '#475569',
+    highlightRing: 'rgba(99, 102, 241, 0.6)',
+  }}
+  steps={steps}
+/>
+```
+
+**ThemeConfig Interface:**
+```tsx
+interface ThemeConfig {
+  backdrop?: string;        // Overlay background
+  tooltipBg?: string;       // Tooltip background
+  tooltipText?: string;     // Text color
+  tooltipBorder?: string;   // Border color
+  buttonBg?: string;        // Secondary button bg
+  buttonText?: string;      // Button text color
+  progressBar?: string;     // Progress track color
+  highlightRing?: string;   // Target highlight glow
+}
+```
+
+---
+
+### Welcome Screen
+
+#### `welcomeScreen`
+- **Type:** `WelcomeScreenConfig`
+- **Description:** Optional intro screen before tour starts
+
+```tsx
+<Tour
+  welcomeScreen={{
+    enabled: true,
+    title: 'Welcome!',
+    message: 'Let me show you around.',
+    startButtonText: 'Start Tour',
+  }}
+  steps={steps}
+/>
+```
+
+**WelcomeScreenConfig Interface:**
+```tsx
+interface WelcomeScreenConfig {
+  enabled: boolean;
+  title?: string;              // Default: 'Welcome'
+  message?: string;            // Default: 'Let me guide you...'
+  startButtonText?: string;    // Default: 'Start Tour'
+}
+```
+
+---
+
+### Button Labels
+
+#### `buttonLabels`
+- **Type:** `ButtonLabels`
+- **Description:** Customize button text (i18n support)
+
+```tsx
+<Tour
+  buttonLabels={{
+    next: 'Continue →',
+    previous: '← Back',
+    skip: 'Skip Tour',
+    finish: 'Done! 🎉',
+    start: 'Begin',
+  }}
+  steps={steps}
+/>
+```
+
+**ButtonLabels Interface:**
+```tsx
+interface ButtonLabels {
+  next?: string;       // Default: 'Next'
+  previous?: string;   // Default: 'Back'
+  skip?: string;       // Default: 'Skip'
+  finish?: string;     // Default: 'Finish'
+  start?: string;      // Default: 'Start Tour'
+}
+```
+
+---
+
+### UI Configuration
+
+#### `showProgress`
+- **Type:** `boolean`
+- **Default:** `true`
+- **Description:** Show/hide progress bar in tooltips
+
+```tsx
+<Tour showProgress={false} steps={steps} />
+```
+
+#### `tourId`
+- **Type:** `string`
+- **Default:** `'nfsfu234-tour-guide'`
+- **Description:** Unique identifier for the tour
+
+```tsx
+<Tour tourId="onboarding-v2" steps={steps} />
+```
+
+---
+
+### CSS Customization
+
+#### `className`
+- **Type:** `string`
+- **Description:** Root container class
+
+#### `overlayClassName`
+- **Type:** `string`
+- **Description:** Backdrop overlay class
+
+#### `tooltipClassName`
+- **Type:** `string`
+- **Description:** Tooltip container class
+
+#### `highlightClassName`
+- **Type:** `string`
+- **Default:** `'nfsfu234-tour-highlight'`
+- **Description:** Highlighted element class
+
+```tsx
+<Tour
+  overlayClassName="custom-backdrop"
+  tooltipClassName="custom-tooltip"
+  highlightClassName="custom-highlight"
+  steps={steps}
+/>
+```
+
+---
+
+### Callbacks
+
+#### `onStart`
+- **Type:** `() => void`
+- **Description:** Called when tour starts
+
+```tsx
+<Tour
+  onStart={() => {
+    console.log('Tour started');
+    analytics.track('tour_started');
+  }}
+  steps={steps}
+/>
+```
+
+#### `onStepChange`
+- **Type:** `(index: number) => void`
+- **Description:** Called when step changes
+
+```tsx
+<Tour
+  onStepChange={(index) => {
+    console.log(`Step ${index + 1}`);
+    analytics.track('tour_step', { step: index });
+  }}
+  steps={steps}
+/>
+```
+
+#### `onSkip`
+- **Type:** `() => void`
+- **Description:** Called when user skips the tour
+
+```tsx
+<Tour
+  onSkip={() => {
+    console.log('Tour skipped');
+    localStorage.setItem('tourSkipped', 'true');
+  }}
+  steps={steps}
+/>
+```
+
+#### `onComplete`
+- **Type:** `() => void`
+- **Description:** Called when tour finishes
+
+```tsx
+<Tour
+  onComplete={() => {
+    console.log('Tour completed');
+    localStorage.setItem('tourCompleted', 'true');
+    showSuccessMessage();
+  }}
+  steps={steps}
+/>
+```
+
+---
+
+## TourStep Interface
+
+### Required Fields
+
+#### `target`
+- **Type:** `string`
+- **Description:** CSS selector for target element
+
+```tsx
+{ target: '#hero' }           // ID
+{ target: '.sidebar' }        // Class
+{ target: '[data-tour="nav"]' } // Attribute
+```
+
+#### `content`
+- **Type:** `string`
+- **Description:** Main tooltip text
+
+```tsx
+{ target: '#hero', content: 'This is the hero section.' }
+```
+
+---
+
+### Optional Fields
+
+#### `contentMobile`
+- **Type:** `string`
+- **Description:** Mobile-specific text (overrides `content` on mobile)
+
+```tsx
+{
+  target: '#pricing',
+  content: 'Check out our comprehensive pricing plans.',
+  contentMobile: 'See pricing',
+}
+```
+
+#### `position`
+- **Type:** `'top' | 'bottom' | 'left' | 'right'`
+- **Default:** `'bottom'`
+- **Description:** Tooltip position relative to target
+
+```tsx
+{ target: '#button', position: 'top' }
+```
+
+#### `offset`
+- **Type:** `{ x?: number; y?: number }`
+- **Description:** Fine-tune tooltip position (pixels)
+
+```tsx
+{
+  target: '#hero',
+  position: 'bottom',
+  offset: { y: 20 }, // 20px extra spacing
+}
+```
+
+#### `device`
+- **Type:** `'desktop' | 'mobile' | 'both'`
+- **Default:** `'both'`
+- **Description:** Show step only on specific devices
+
+```tsx
+{ target: '#desktop-nav', device: 'desktop' }
+{ target: '#mobile-menu', device: 'mobile' }
+{ target: '#hero', device: 'both' }
+```
+
+---
+
+## Complete Example
+
+```tsx
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function MyApp() {
+  const [showTour, setShowTour] = useState(true);
+
+  const steps = [
+    {
+      target: '#hero',
+      content: 'Welcome to our platform!',
+      contentMobile: 'Welcome!',
+      position: 'bottom',
+      device: 'both',
+    },
+    {
+      target: '#features',
+      content: 'Explore our key features here.',
+      position: 'top',
+      offset: { y: 10 },
+    },
+    {
+      target: '#cta',
+      content: 'Ready to get started? Click here!',
+      position: 'left',
+      device: 'desktop',
+    },
+  ];
+
+  return (
+    <Tour
+      isActive={showTour}
+      steps={steps}
+      theme="dark"
+      accentColor="#10b981"
+      showProgress={true}
+      welcomeScreen={{
+        enabled: true,
+        title: 'Welcome Aboard! 🚀',
+        message: 'Let me show you around in 60 seconds.',
+        startButtonText: 'Start Tour',
+      }}
+      buttonLabels={{
+        next: 'Next →',
+        previous: '← Back',
+        skip: 'Skip',
+        finish: 'Got it! 🎉',
+      }}
+      onStart={() => console.log('Tour started')}
+      onStepChange={(i) => console.log(`Step ${i}`)}
+      onSkip={() => setShowTour(false)}
+      onComplete={() => {
+        setShowTour(false);
+        localStorage.setItem('tourCompleted', 'true');
+      }}
+    />
+  );
+}
+```
+
+---
+
+## TypeScript Support
+
+All interfaces are exported for TypeScript users:
+
+```tsx
+import Tour, {
+  TourProps,
+  TourStep,
+  WelcomeScreenConfig,
+  ButtonLabels,
+  ThemeConfig,
+} from 'nfsfu234-tour-guide';
+```
+
+---
+
+## Browser Support
+
+- ✅ Chrome (last 2 versions)
+- ✅ Firefox (last 2 versions)
+- ✅ Safari (last 2 versions)
+- ✅ Edge (last 2 versions)
+- ✅ Mobile browsers (iOS Safari, Chrome Android)
+
+**Required APIs:**
+- Intersection Observer (widely supported)
+- React Portals
+- CSS `position: fixed`

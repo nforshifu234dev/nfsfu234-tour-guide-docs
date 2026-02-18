@@ -1,0 +1,252 @@
+---
+title: Getting Started
+description: Install and set up nfsfu234-tour-guide in your React app in under 2 minutes.
+keywords: [react tour guide, getting started, install, setup, onboarding]
+---
+
+# Getting Started
+
+Get up and running with **NFSFU234TourGuide** in under 5 minutes.
+
+---
+
+## 📦 Installation
+
+Install the package using your preferred package manager:
+
+```bash npm2yarn
+npm install nfsfu234-tour-guide
+```
+
+**Requirements:**
+- React 18+ or React 19+
+- ReactDOM 18+ or ReactDOM 19+
+
+---
+
+## 🎬 Your First Tour
+
+### Step 1: Import the Component
+
+```tsx
+import { Tour } from 'nfsfu234-tour-guide';
+```
+
+### Step 2: Define Your Steps
+
+Create an array of steps that target elements on your page:
+
+```tsx
+const steps = [
+  {
+    target: '#hero',
+    content: 'This is the hero section of our app.',
+    position: 'bottom',
+  },
+  {
+    target: '#features',
+    content: 'Here are our key features.',
+    position: 'top',
+  },
+  {
+    target: '#cta',
+    content: 'Ready to get started? Click here!',
+    position: 'left',
+  },
+];
+```
+
+### Step 3: Add the Tour Component
+
+```tsx
+export default function App() {
+  return (
+    <>
+      <Tour
+        steps={steps}
+        theme="dark"
+        accentColor="#10b981"
+        welcomeScreen={{
+          enabled: true,
+          title: 'Welcome!',
+          message: 'Let me show you around.',
+        }}
+        onComplete={() => console.log('Tour completed!')}
+      />
+
+      {/* Your app content */}
+      <section id="hero">Hero Content</section>
+      <section id="features">Features</section>
+      <button id="cta">Get Started</button>
+    </>
+  );
+}
+```
+
+That's it! 🎉 You now have a working tour.
+
+---
+
+## 🔧 Basic Configuration
+
+### Themes
+
+Choose from built-in themes:
+
+```tsx
+<Tour theme="dark" steps={steps} />   // Dark theme (default)
+<Tour theme="light" steps={steps} />  // Light theme
+```
+
+### Accent Color
+
+Customize the primary color:
+
+```tsx
+<Tour accentColor="#10b981" steps={steps} />  // Emerald green
+<Tour accentColor="#3b82f6" steps={steps} />  // Blue
+<Tour accentColor="#ef4444" steps={steps} />  // Red
+```
+
+### Progress Bar
+
+Show or hide the progress indicator:
+
+```tsx
+<Tour showProgress={true} steps={steps} />   // Show (default)
+<Tour showProgress={false} steps={steps} />  // Hide
+```
+
+---
+
+## 🎯 Next.js Setup
+
+If you're using **Next.js**, make sure to use the `'use client'` directive:
+
+```tsx filename="components/OnboardingTour.tsx"
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function OnboardingTour() {
+  const [showTour, setShowTour] = useState(false);
+
+  useEffect(() => {
+    // Check if user has seen the tour
+    const hasSeenTour = localStorage.getItem('hasSeenTour');
+    if (!hasSeenTour) {
+      setShowTour(true);
+    }
+  }, []);
+
+  const handleComplete = () => {
+    localStorage.setItem('hasSeenTour', 'true');
+    setShowTour(false);
+  };
+
+  const steps = [
+    { target: '#hero', content: 'Welcome!' },
+    { target: '#features', content: 'Check out our features.' },
+  ];
+
+  return (
+    <Tour
+      isActive={showTour}
+      steps={steps}
+      onComplete={handleComplete}
+      onSkip={handleComplete}
+    />
+  );
+}
+```
+
+Then use it in your page:
+
+```tsx filename="app/page.tsx"
+import OnboardingTour from '@/components/OnboardingTour';
+
+export default function Home() {
+  return (
+    <>
+      <OnboardingTour />
+      {/* Your page content */}
+    </>
+  );
+}
+```
+
+---
+
+## 🎨 Styling
+
+The tour works out of the box with beautiful defaults. For advanced customization, see:
+
+- [Custom Themes](/api-reference#custom-themes)
+- [CSS Class Names](/api-reference#styling)
+
+---
+
+## 📱 Mobile Support
+
+The library is mobile-responsive by default. For device-specific behavior:
+
+```tsx
+const steps = [
+  {
+    target: '#hero',
+    content: 'This is a longer explanation for desktop users.',
+    contentMobile: 'Shorter text for mobile!',
+    device: 'both', // 'desktop' | 'mobile' | 'both'
+  },
+];
+```
+
+Learn more in [Mobile-Aware Examples](/examples/mobile-aware).
+
+---
+
+## ✅ Checklist
+
+Before deploying, make sure:
+
+- [ ] All target selectors (`#hero`, `.sidebar`, etc.) exist in the DOM
+- [ ] Tour appears after page content has loaded
+- [ ] Tour is tested on both desktop and mobile
+- [ ] Welcome screen text is clear and concise
+- [ ] Tour completion is tracked (e.g., in localStorage)
+
+---
+
+## 🐛 Common Issues
+
+### Target Not Found
+
+If you see: `[NFSFU234TourGuide] Target "#hero" not found`
+
+**Solution:** Ensure the element exists before the tour starts:
+
+```tsx
+useEffect(() => {
+  // Wait for DOM to be ready
+  const timer = setTimeout(() => setShowTour(true), 100);
+  return () => clearTimeout(timer);
+}, []);
+```
+
+### Tooltip Not Visible
+
+**Solution:** Check z-index conflicts. The tour uses `z-index: 9998-10000`.
+
+---
+
+## 🚀 Next Steps
+
+- [Explore Examples](/examples/basic)
+- [Read API Reference](/api-reference)
+- [Customize Themes](/api-reference#custom-themes)
+- [View Migration Guide](/migration) (if upgrading from v0.x)
+
+---
+
+Need help? [Ask in GitHub Discussions](https://github.com/nforshifu234dev/nfsfu234-tour-guide/discussions) 💬

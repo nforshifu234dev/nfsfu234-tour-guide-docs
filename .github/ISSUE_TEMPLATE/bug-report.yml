@@ -1,0 +1,36 @@
+name: Bug Report
+description: Report broken or incorrect documentation
+title: "[Bug]: "
+labels: ["bug", "help wanted"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Issue
+      description: What is wrong with the documentation?
+      placeholder: E.g., "The API reference shows the wrong prop name for customTheme."
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Affected Page
+      description: Which page has the issue?
+      placeholder: E.g., /api-reference or /examples/custom-theme
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What Should It Say?
+      description: What is the correct information?
+      placeholder: E.g., "The prop should be named `themeConfig` not `customTheme`."
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Screenshots, links, or anything else helpful.
+    validations:
+      required: false

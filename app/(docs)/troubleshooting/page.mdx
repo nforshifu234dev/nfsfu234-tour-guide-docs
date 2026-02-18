@@ -1,0 +1,421 @@
+---
+title: Troubleshooting
+description: Fix common issues with nfsfu234-tour-guide setup and usage.
+keywords: [troubleshooting, fixes, errors, common problems, debug]
+---
+
+# Troubleshooting
+
+Common issues and solutions for **NFSFU234TourGuide**.
+
+---
+
+## Installation Issues
+
+### Package Not Found
+**Error:** `npm ERR! 404 Not Found - GET https://registry.npmjs.org/nfsfu234-tour-guide`
+
+**Solution:**
+```bash
+# Clear npm cache
+npm cache clean --force
+
+# Try again
+npm install nfsfu234-tour-guide
+```
+
+### Peer Dependency Warnings
+**Warning:** `ERESOLVE unable to resolve dependency tree`
+
+**Solution:**
+```bash
+# Use legacy peer deps (npm 7+)
+npm install nfsfu234-tour-guide --legacy-peer-deps
+
+# Or force install
+npm install nfsfu234-tour-guide --force
+```
+
+---
+
+## Tour Not Showing
+
+### Target Not Found Warning
+**Console:** `[NFSFU234TourGuide] Target "#hero" not found in DOM`
+
+**Cause:** Element doesn't exist when tour renders
+
+**Solution 1 - Wait for DOM:**
+```tsx
+useEffect(() => {
+  const timer = setTimeout(() => setShowTour(true), 100);
+  return () => clearTimeout(timer);
+}, []);
+```
+
+**Solution 2 - Check element exists:**
+```tsx
+const steps = [
+  { target: '#hero', content: 'Welcome' },
+].filter(step => document.querySelector(step.target)); // Filter out missing targets
+```
+
+**Solution 3 - Next.js hydration:**
+```tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+
+export default function MyTour() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null; // Don't render until client-side
+
+  return <Tour steps={steps} />;
+}
+```
+
+### Tour Appears But No Tooltip
+**Issue:** Backdrop shows but no tooltip visible
+
+**Causes & Solutions:**
+
+1. **Z-index conflict**
+   ```css
+   /* Check if another element has higher z-index */
+   /* Tour uses z-index: 9998-10000 */
+   
+   /* Fix: Lower other element's z-index */
+   .my-modal {
+     z-index: 9997; /* Below tour */
+   }
+   ```
+
+2. **CSS overrides**
+   ```tsx
+   // Check if custom classes are hiding tooltip
+   <Tour
+     tooltipClassName="my-custom-class" // Might have display: none
+   />
+   ```
+
+3. **Position off-screen**
+   ```tsx
+   // Add offset to bring tooltip into view
+   {
+     target: '#button',
+     position: 'bottom',
+     offset: { y: 20 }, // Add spacing
+   }
+   ```
+
+---
+
+## Positioning Issues
+
+### Tooltip Appears in Wrong Place
+**Issue:** Tooltip doesn't follow target element
+
+**Solutions:**
+
+1. **Force recalculation:**
+   ```tsx
+   const [key, setKey] = useState(0);
+   
+   <Tour
+     key={key} // Force remount
+     steps={steps}
+     onStepChange={() => setKey(k => k + 1)}
+   />
+   ```
+
+2. **Check target positioning:**
+   ```css
+   /* Target element must be visible and have layout */
+   #my-target {
+     display: block; /* Not display: none */
+     visibility: visible; /* Not hidden */
+   }
+   ```
+
+3. **Adjust offset:**
+   ```tsx
+   {
+     target: '#button',
+     position: 'bottom',
+     offset: { x: 0, y: 20 }, // Fine-tune position
+   }
+   ```
+
+### Tooltip Jumps Around on Scroll
+**Issue:** Tooltip moves unexpectedly while scrolling
+
+**Cause:** Parent element has transform/position that creates new stacking context
+
+**Solution:**
+```css
+/* Remove transforms from parent elements during tour */
+.parent-element {
+  transform: none !important; /* Temporarily disable */
+}
+```
+
+---
+
+## Mobile Issues
+
+### Tooltip Off-Screen on Mobile
+**Issue:** Tooltip appears outside viewport on small screens
+
+**Solution:**
+```tsx
+{
+  target: '#button',
+  position: 'bottom', // Use bottom/top on mobile
+  offset: { y: 10 }, // Small offset
+  contentMobile: 'Short text', // Shorter content
+}
+```
+
+### Welcome Screen Scrolls on Mobile
+**Issue:** Can scroll behind welcome screen
+
+**Cause:** Body scroll lock not working
+
+**Solution:**
+```tsx
+'use client';
+
+// Make sure component is client-side
+export default function MyTour() {
+  return <Tour welcomeScreen={{ enabled: true }} steps={steps} />;
+}
+```
+
+---
+
+## TypeScript Issues
+
+### Type Errors
+**Error:** `Property 'customTheme' does not exist on type 'TourProps'`
+
+**Solution:**
+```bash
+# Update types
+npm install @types/react@latest
+
+# Or import types explicitly
+import Tour, { TourProps } from 'nfsfu234-tour-guide';
+```
+
+### Module Not Found
+**Error:** `Cannot find module 'nfsfu234-tour-guide'`
+
+**Solution:**
+```tsx
+// Make sure path is correct
+import { Tour } from 'nfsfu234-tour-guide'; // ✅
+import Tour from 'nfsfu234-tour-guide/dist'; // ❌
+```
+
+---
+
+## Next.js Specific Issues
+
+### Hydration Mismatch
+**Error:** `Hydration failed because the initial UI does not match...`
+
+**Solution:**
+```tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function MyTour() {
+  const [showTour, setShowTour] = useState(false);
+
+  useEffect(() => {
+    // Only show tour client-side
+    setShowTour(true);
+  }, []);
+
+  if (!showTour) return null;
+
+  return <Tour steps={steps} />;
+}
+```
+
+### localStorage Not Defined
+**Error:** `ReferenceError: localStorage is not defined`
+
+**Solution:**
+```tsx
+useEffect(() => {
+  // Check if window exists (client-side)
+  if (typeof window !== 'undefined') {
+    const hasSeenTour = localStorage.getItem('hasSeenTour');
+    setShowTour(!hasSeenTour);
+  }
+}, []);
+```
+
+---
+
+## Performance Issues
+
+### Slow Tour Start
+**Issue:** Delay before tour appears
+
+**Causes & Solutions:**
+
+1. **Large page:**
+   ```tsx
+   // Preload tour on page load
+   useEffect(() => {
+     import('nfsfu234-tour-guide'); // Preload
+   }, []);
+   ```
+
+2. **Many steps:**
+   ```tsx
+   // Reduce number of steps
+   const steps = allSteps.slice(0, 5); // Show only first 5
+   ```
+
+3. **Heavy DOM:**
+   ```tsx
+   // Use requestIdleCallback
+   useEffect(() => {
+     requestIdleCallback(() => setShowTour(true));
+   }, []);
+   ```
+
+---
+
+## Styling Issues
+
+### Custom Theme Not Applying
+**Issue:** Custom colors don't show
+
+**Solution:**
+```tsx
+<Tour
+  theme="custom" // ← Must set to "custom"
+  customTheme={{
+    tooltipBg: '#1e293b',
+    // ...
+  }}
+  steps={steps}
+/>
+```
+
+### Dark Mode Toggle Not Working
+**Issue:** Theme doesn't change dynamically
+
+**Solution:**
+```tsx
+const [isDark, setIsDark] = useState(true);
+
+<Tour
+  key={isDark ? 'dark' : 'light'} // Force remount on theme change
+  theme={isDark ? 'dark' : 'light'}
+  steps={steps}
+/>
+```
+
+---
+
+## Browser Compatibility
+
+### Not Working in Internet Explorer
+**Issue:** Tour doesn't work in IE11
+
+**Reason:** Library requires modern browser APIs:
+- Intersection Observer
+- React Portals
+- ES6+ features
+
+**Solution:** Add polyfills or use a different library for IE support
+
+### Safari Issues
+**Issue:** Tooltip positioning incorrect in Safari
+
+**Solution:**
+```tsx
+// Use fixed positioning strategy
+{
+  target: '#button',
+  position: 'bottom',
+  offset: { y: 15 }, // Add extra offset for Safari
+}
+```
+
+---
+
+## Still Having Issues?
+
+### Debug Mode
+Enable console logging to see what's happening:
+
+```tsx
+<Tour
+  steps={steps}
+  onStart={() => console.log('Tour started')}
+  onStepChange={(i) => console.log('Step:', i, steps[i])}
+  onSkip={() => console.log('Tour skipped')}
+  onComplete={() => console.log('Tour completed')}
+/>
+```
+
+### Check Browser Console
+Look for errors or warnings:
+1. Open DevTools (F12)
+2. Go to Console tab
+3. Look for `[NFSFU234TourGuide]` messages
+
+### Minimal Reproduction
+Create a minimal example:
+```tsx
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function Test() {
+  const steps = [{ target: '#test', content: 'Test' }];
+  return (
+    <>
+      <Tour steps={steps} />
+      <div id="test">Target</div>
+    </>
+  );
+}
+```
+
+---
+
+## Get Help
+
+If you're still stuck:
+
+1. **Search existing issues:** [GitHub Issues](https://github.com/nforshifu234dev/nfsfu234-tour-guide/issues)
+2. **Ask in discussions:** [GitHub Discussions](https://github.com/nforshifu234dev/nfsfu234-tour-guide/discussions)
+3. **Report a bug:** [New Issue](https://github.com/nforshifu234dev/nfsfu234-tour-guide/issues/new)
+
+**When reporting, include:**
+- Library version (`npm list nfsfu234-tour-guide`)
+- React version
+- Browser & OS
+- Code example
+- Error messages
+- Screenshots (if relevant)
+
+---
+
+## Related Pages
+
+- [Getting Started](/getting-started) - Setup guide
+- [API Reference](/api-reference) - Full documentation
+- [Examples](/examples) - Working code examples

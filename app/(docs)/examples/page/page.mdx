@@ -1,0 +1,87 @@
+---
+title: Examples
+description: Real-world usage examples for nfsfu234-tour-guide.
+keywords: [examples, react tour guide, code examples, demo]
+---
+
+# Examples
+
+Real-world examples showing how to use **NFSFU234TourGuide** in different scenarios.
+
+import { Cards, Card } from 'nextra/components';
+
+---
+
+## Browse Examples
+
+<Cards>
+  <Card title="Basic Tour" href="/examples/basic">
+    Simple tour with essential features
+  </Card>
+  <Card title="Custom Theme" href="/examples/custom-theme">
+    Brand-specific colors and styling
+  </Card>
+  <Card title="Mobile-Aware" href="/examples/mobile-aware">
+    Device-specific steps and content
+  </Card>
+  <Card title="SaaS Onboarding" href="/examples/saas-onboarding">
+    Production-ready onboarding flow
+  </Card>
+  <Card title="Multi-Language (i18n)" href="/examples/i18n">
+    Internationalization support
+  </Card>
+  <Card title="Conditional Steps" href="/examples/conditional">
+    Dynamic steps based on user state
+  </Card>
+</Cards>
+
+---
+
+## Quick Snippets
+
+### Minimal Setup
+```tsx
+import { Tour } from 'nfsfu234-tour-guide';
+
+const steps = [
+  { target: '#hero', content: 'Welcome!' },
+  { target: '#cta', content: 'Click here to start.' },
+];
+
+<Tour steps={steps} />
+```
+
+### With Welcome Screen
+```tsx
+<Tour
+  steps={steps}
+  welcomeScreen={{
+    enabled: true,
+    title: 'Welcome!',
+    message: 'Let me show you around.',
+  }}
+/>
+```
+
+### Custom Colors
+```tsx
+<Tour
+  steps={steps}
+  theme="custom"
+  customTheme={{
+    tooltipBg: '#1e293b',
+    tooltipText: '#f1f5f9',
+  }}
+  accentColor="#6366f1"
+/>
+```
+
+---
+
+## Need Help?
+
+Can't find what you're looking for?
+
+- [API Reference](/api-reference) - Complete prop documentation
+- [GitHub Discussions](https://github.com/nforshifu234dev/nfsfu234-tour-guide/discussions) - Ask questions
+- [Report Issues](https://github.com/nforshifu234dev/nfsfu234-tour-guide/issues) - Found a bug?

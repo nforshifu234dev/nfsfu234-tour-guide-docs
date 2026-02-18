@@ -1,0 +1,249 @@
+---
+title: Internationalization (i18n)
+description: Support multiple languages and RTL with nfsfu234-tour-guide.
+keywords: [i18n, internationalization, RTL, translation, multilingual]
+---
+
+# Internationalization (i18n)
+
+Support multiple languages in your tour.
+
+---
+
+## Simple Translation Example
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { Tour } from 'nfsfu234-tour-guide';
+
+const translations = {
+  en: {
+    welcome: { title: 'Welcome!', message: 'Let me show you around.', button: 'Start Tour' },
+    steps: [
+      { target: '#hero', content: 'This is the hero section.' },
+      { target: '#features', content: 'Check out our features.' },
+    ],
+    buttons: { next: 'Next', previous: 'Back', skip: 'Skip', finish: 'Finish' },
+  },
+  es: {
+    welcome: { title: '¡Bienvenido!', message: 'Déjame mostrarte.', button: 'Comenzar' },
+    steps: [
+      { target: '#hero', content: 'Esta es la sección principal.' },
+      { target: '#features', content: 'Mira nuestras características.' },
+    ],
+    buttons: { next: 'Siguiente', previous: 'Atrás', skip: 'Saltar', finish: 'Terminar' },
+  },
+  fr: {
+    welcome: { title: 'Bienvenue!', message: 'Laissez-moi vous faire visiter.', button: 'Commencer' },
+    steps: [
+      { target: '#hero', content: 'Ceci est la section principale.' },
+      { target: '#features', content: 'Découvrez nos fonctionnalités.' },
+    ],
+    buttons: { next: 'Suivant', previous: 'Retour', skip: 'Passer', finish: 'Terminer' },
+  },
+};
+
+export default function I18nTour() {
+  const [language, setLanguage] = useState('en');
+  const t = translations[language];
+
+  return (
+    <>
+      <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="fr">Français</option>
+      </select>
+
+      <Tour
+        steps={t.steps}
+        welcomeScreen={{
+          enabled: true,
+          title: t.welcome.title,
+          message: t.welcome.message,
+          startButtonText: t.welcome.button,
+        }}
+        buttonLabels={t.buttons}
+      />
+    </>
+  );
+}
+```
+
+---
+
+## With react-i18next
+
+```tsx
+'use client';
+
+import { useTranslation } from 'react-i18next';
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function I18nTour() {
+  const { t } = useTranslation('tour');
+
+  const steps = [
+    { target: '#hero', content: t('steps.hero') },
+    { target: '#features', content: t('steps.features') },
+  ];
+
+  return (
+    <Tour
+      steps={steps}
+      welcomeScreen={{
+        enabled: true,
+        title: t('welcome.title'),
+        message: t('welcome.message'),
+        startButtonText: t('welcome.startButton'),
+      }}
+      buttonLabels={{
+        next: t('buttons.next'),
+        previous: t('buttons.previous'),
+        skip: t('buttons.skip'),
+        finish: t('buttons.finish'),
+      }}
+    />
+  );
+}
+```
+
+**Translation file** (`locales/en/tour.json`):
+
+```json
+{
+  "welcome": {
+    "title": "Welcome!",
+    "message": "Let me show you around.",
+    "startButton": "Start Tour"
+  },
+  "steps": {
+    "hero": "This is your dashboard.",
+    "features": "Explore powerful features."
+  },
+  "buttons": {
+    "next": "Next",
+    "previous": "Back",
+    "skip": "Skip Tour",
+    "finish": "Get Started"
+  }
+}
+```
+
+---
+
+## With next-intl (Next.js)
+
+```tsx
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function NextIntlTour() {
+  const t = useTranslations('Tour');
+
+  const steps = [
+    { target: '#hero', content: t('steps.hero') },
+    { target: '#features', content: t('steps.features') },
+  ];
+
+  return (
+    <Tour
+      steps={steps}
+      welcomeScreen={{
+        enabled: true,
+        title: t('welcome.title'),
+        message: t('welcome.message'),
+      }}
+      buttonLabels={{
+        next: t('buttons.next'),
+        previous: t('buttons.previous'),
+        skip: t('buttons.skip'),
+        finish: t('buttons.finish'),
+      }}
+    />
+  );
+}
+```
+
+---
+
+## RTL (Right-to-Left) Support
+
+For Arabic, Hebrew, and other RTL languages:
+
+```tsx
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function RTLTour() {
+  const [isRTL, setIsRTL] = useState(false);
+
+  useEffect(() => {
+    setIsRTL(document.documentElement.dir === 'rtl');
+  }, []);
+
+  const steps = [
+    {
+      target: '#hero',
+      content: isRTL ? 'هذا هو القسم الرئيسي' : 'This is the hero section',
+      position: isRTL ? 'left' : 'right',
+    },
+  ];
+
+  return (
+    <Tour
+      steps={steps}
+      welcomeScreen={{
+        enabled: true,
+        title: isRTL ? 'مرحباً' : 'Welcome',
+        message: isRTL ? 'دعني أريك المنصة' : 'Let me show you around',
+      }}
+      buttonLabels={{
+        next: isRTL ? 'التالي' : 'Next',
+        previous: isRTL ? 'السابق' : 'Back',
+        skip: isRTL ? 'تخطي' : 'Skip',
+        finish: isRTL ? 'إنهاء' : 'Finish',
+      }}
+    />
+  );
+}
+```
+
+---
+
+## Supported Languages
+
+| Language | Code | Welcome Title |
+|----------|------|---------------|
+| English | `en` | Welcome! |
+| Spanish | `es` | ¡Bienvenido! |
+| French | `fr` | Bienvenue! |
+| German | `de` | Willkommen! |
+| Portuguese | `pt` | Bem-vindo! |
+| Arabic | `ar` | !مرحباً |
+| Japanese | `ja` | ようこそ! |
+| Chinese | `zh` | 欢迎! |
+| Hindi | `hi` | स्वागत है! |
+
+---
+
+## Best Practices
+
+- Keep tooltip text short (especially for mobile)
+- Always fallback to English: `translations[lang] || translations.en`
+- Test all languages for text overflow in tooltips
+- Consider RTL layout for Arabic/Hebrew
+
+---
+
+## Next Steps
+
+- [SaaS Onboarding](/examples/saas-onboarding) - Production example
+- [Mobile-Aware](/examples/mobile-aware) - Responsive tours
+- [API Reference](/api-reference) - Full configuration

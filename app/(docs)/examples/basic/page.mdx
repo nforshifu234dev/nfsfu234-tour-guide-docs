@@ -1,0 +1,126 @@
+---
+title: Basic Example
+description: A minimal working tour setup with nfsfu234-tour-guide.
+keywords: [basic example, minimal, getting started, tour guide]
+---
+
+# Basic Tour Example
+
+A simple tour with the essential features to get you started.
+
+---
+
+## Live Demo
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function BasicTourExample() {
+  const [showTour, setShowTour] = useState(true);
+
+  const steps = [
+    {
+      target: '#hero',
+      content: 'This is the hero section with your main value proposition.',
+      position: 'bottom',
+    },
+    {
+      target: '#features',
+      content: 'Here are the key features of your product.',
+      position: 'top',
+    },
+    {
+      target: '#pricing',
+      content: 'Check out our pricing plans.',
+      position: 'right',
+    },
+    {
+      target: '#cta',
+      content: 'Ready to get started? Click here!',
+      position: 'top',
+    },
+  ];
+
+  return (
+    <>
+      <Tour
+        isActive={showTour}
+        steps={steps}
+        theme="dark"
+        accentColor="#10b981"
+        onComplete={() => setShowTour(false)}
+        onSkip={() => setShowTour(false)}
+      />
+
+      {/* Your page content */}
+      <section id="hero">
+        <h1>Welcome to Our App</h1>
+        <p>The best solution for your needs</p>
+      </section>
+
+      <section id="features">
+        <h2>Features</h2>
+        <ul>
+          <li>Fast</li>
+          <li>Secure</li>
+          <li>Scalable</li>
+        </ul>
+      </section>
+
+      <section id="pricing">
+        <h2>Pricing</h2>
+        <p>Starting at $9/month</p>
+      </section>
+
+      <button id="cta">Get Started</button>
+    </>
+  );
+}
+```
+
+---
+
+## Key Points
+
+### Simple Step Definition
+Steps are just objects with `target`, `content`, and `position`:
+
+```tsx
+{
+  target: '#hero',    // CSS selector
+  content: 'Text',    // Tooltip message
+  position: 'bottom', // Where to show tooltip
+}
+```
+
+### State Management
+Use React state to control tour visibility:
+
+```tsx
+const [showTour, setShowTour] = useState(true);
+
+<Tour
+  isActive={showTour}
+  onComplete={() => setShowTour(false)}
+  onSkip={() => setShowTour(false)}
+/>
+```
+
+### Essential Props
+- `steps` - Array of tour steps (required)
+- `isActive` - Show/hide tour
+- `theme` - Visual style ('dark' or 'light')
+- `accentColor` - Primary color
+- `onComplete` - What happens when tour finishes
+- `onSkip` - What happens when user skips
+
+---
+
+## Next Steps
+
+- [Add a Welcome Screen](/examples/saas-onboarding#welcome-screen)
+- [Customize Theme](/examples/custom-theme)
+- [Make it Mobile-Friendly](/examples/mobile-aware)

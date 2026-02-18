@@ -1,0 +1,355 @@
+---
+title: FAQ
+description: Frequently asked questions about nfsfu234-tour-guide.
+keywords: [faq, questions, troubleshooting, common issues]
+---
+
+# Frequently Asked Questions
+
+Common questions about **nfsfu234-tour-guide**.
+
+---
+
+## General
+
+### Is this free to use?
+
+Yes! **nfsfu234-tour-guide** is MIT licensed — completely free for personal and commercial use. No attribution required.
+
+---
+
+### Does it work with React 19?
+
+Yes. The library supports **React 18 and React 19**.
+
+---
+
+### Does it work with Next.js?
+
+Yes. Works with both the **Pages Router** and **App Router**. Just add `'use client'` to any component that uses the Tour:
+
+```tsx
+'use client';
+
+import { Tour } from 'nfsfu234-tour-guide';
+```
+
+---
+
+### Does it work with Vite / Create React App?
+
+Yes — it works with any React web setup:
+- ✅ Vite
+- ✅ Create React App
+- ✅ Next.js
+- ✅ Remix
+- ✅ Astro (React islands)
+- ✅ Expo Web
+- ❌ React Native / Expo mobile (web APIs not available)
+
+---
+
+### Does it work with Expo or React Native?
+
+**No** — this library is **web only**. It uses browser APIs (`document.querySelector`, `position: fixed`, Intersection Observer) that don't exist in React Native.
+
+For Expo projects:
+- **Expo Web** ✅ — works fine
+- **Expo iOS/Android** ❌ — not supported
+
+For React Native, consider `react-native-copilot` or `react-native-walkthrough-tooltip`.
+
+---
+
+### Does it need Tailwind CSS?
+
+**No.** All styling is done with inline styles. Tailwind is not required and there's no CSS file to import. It works out of the box with zero CSS setup.
+
+---
+
+### What are the dependencies?
+
+**None.** Only `react` and `react-dom` are required (as peer dependencies). No third-party packages are bundled.
+
+---
+
+## Installation & Setup
+
+### Why do I see a "pages directory not found" error in Next.js?
+
+Make sure your `Tour` component is inside a **Client Component**:
+
+```tsx
+'use client'; // ← This is required
+
+import { Tour } from 'nfsfu234-tour-guide';
+```
+
+---
+
+### I get a hydration mismatch error. How do I fix it?
+
+Use `useEffect` to delay rendering until the client side:
+
+```tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function MyTour() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  return <Tour steps={steps} />;
+}
+```
+
+---
+
+### How do I show the tour only once per user?
+
+Use `localStorage` to track if the user has seen the tour:
+
+```tsx
+useEffect(() => {
+  const seen = localStorage.getItem('tourCompleted');
+  if (!seen) setShowTour(true);
+}, []);
+
+const handleComplete = () => {
+  localStorage.setItem('tourCompleted', 'true');
+  setShowTour(false);
+};
+```
+
+---
+
+## Styling & Theming
+
+### How do I change the accent color?
+
+Use the `accentColor` prop — it controls buttons and the progress bar:
+
+```tsx
+<Tour accentColor="#6366f1" steps={steps} />
+```
+
+---
+
+### How do I fully customize the colors?
+
+Use `theme="custom"` with the `customTheme` prop:
+
+```tsx
+<Tour
+  theme="custom"
+  customTheme={{
+    backdrop: 'rgba(0, 0, 0, 0.85)',
+    tooltipBg: '#1e293b',
+    tooltipText: '#f1f5f9',
+    tooltipBorder: '#475569',
+    buttonBg: '#334155',
+    buttonText: '#ffffff',
+    progressBar: '#475569',
+    highlightRing: 'rgba(99, 102, 241, 0.6)',
+  }}
+  accentColor="#6366f1"
+  steps={steps}
+/>
+```
+
+---
+
+### Can I use it with dark mode?
+
+Yes. Pass the theme dynamically:
+
+```tsx
+const { resolvedTheme } = useTheme(); // next-themes example
+
+<Tour
+  theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
+  steps={steps}
+/>
+```
+
+---
+
+### Can I style the tooltip with CSS classes?
+
+Yes — use `tooltipClassName` and `overlayClassName`:
+
+```tsx
+<Tour
+  tooltipClassName="my-tooltip"
+  overlayClassName="my-backdrop"
+  steps={steps}
+/>
+```
+
+Note: for full color control, `customTheme` is recommended over CSS classes.
+
+---
+
+## Tour Behavior
+
+### Can I trigger the tour programmatically (e.g., from a button)?
+
+Yes — control it with the `isActive` prop:
+
+```tsx
+const [showTour, setShowTour] = useState(false);
+
+<button onClick={() => setShowTour(true)}>Start Tour</button>
+
+<Tour
+  isActive={showTour}
+  steps={steps}
+  onComplete={() => setShowTour(false)}
+  onSkip={() => setShowTour(false)}
+/>
+```
+
+---
+
+### Can I show different steps based on user role?
+
+Yes — just filter or build the steps array before passing it:
+
+```tsx
+const steps = user.isAdmin
+  ? [...baseSteps, ...adminSteps]
+  : baseSteps;
+
+<Tour steps={steps} />
+```
+
+See [Conditional Steps](/examples/conditional) for more examples.
+
+---
+
+### Can I show different content on mobile?
+
+Yes — use `contentMobile` and `device`:
+
+```tsx
+{
+  target: '#hero',
+  content: 'Full desktop explanation here.',
+  contentMobile: 'Short mobile version.',
+  device: 'both',
+}
+```
+
+---
+
+### What happens if a target element doesn't exist?
+
+The library logs a warning:
+```
+[NFSFU234TourGuide] Target "#my-element" not found in DOM
+```
+That step is skipped silently and the tour moves on.
+
+---
+
+### Can I skip steps conditionally?
+
+Yes — filter out steps before passing them:
+
+```tsx
+const steps = allSteps.filter(step => {
+  if (step.target === '#admin-panel' && !user.isAdmin) return false;
+  return true;
+});
+```
+
+---
+
+### Does the backdrop close the tour when clicked?
+
+Yes — clicking the backdrop triggers `onSkip`. To disable this, you can override with `overlayClassName` and set `pointer-events: none`, or handle the skip callback to do nothing.
+
+---
+
+## Troubleshooting
+
+### The tooltip appears in the wrong position. How do I fix it?
+
+1. Make sure the target element is visible in the DOM
+2. Try a different `position` value (`top`, `bottom`, `left`, `right`)
+3. Use `offset` to fine-tune:
+
+```tsx
+{
+  target: '#button',
+  position: 'bottom',
+  offset: { y: 16 },
+}
+```
+
+---
+
+### The tour shows but the tooltip has no background color.
+
+Make sure you're not using `/98` opacity Tailwind classes — we use solid hex colors. The `theme="dark"` preset uses `#18181b`. If using `customTheme`, ensure `tooltipBg` is set to a solid color, not transparent.
+
+---
+
+### I get `localStorage is not defined`.
+
+You're accessing `localStorage` during server-side rendering. Wrap it in `useEffect` or check `typeof window`:
+
+```tsx
+useEffect(() => {
+  if (typeof window !== 'undefined') {
+    const seen = localStorage.getItem('tourSeen');
+  }
+}, []);
+```
+
+---
+
+## Contributing & Community
+
+### How do I report a bug?
+
+[Open an issue on GitHub](https://github.com/nforshifu234dev/nfsfu234-tour-guide/issues/new) with:
+- Library version
+- React version
+- Minimal code example
+- Expected vs actual behavior
+
+---
+
+### How do I request a feature?
+
+[Open a GitHub Discussion](https://github.com/nforshifu234dev/nfsfu234-tour-guide/discussions) or issue with the `enhancement` label.
+
+---
+
+### How do I contribute code?
+
+See the [Contributing Guide](/contributing) for full instructions.
+
+---
+
+### Where do I ask questions?
+
+[GitHub Discussions](https://github.com/nforshifu234dev/nfsfu234-tour-guide/discussions) — search first, then ask if you don't find an answer.
+
+---
+
+### Who built this?
+
+Built by [NFORSHIFU234 Dev](https://github.com/nforshifu234dev). Nigerian developer building tools for the global dev community. 🇳🇬🌍
+
+---
+
+*Didn't find your answer? [Ask on GitHub Discussions →](https://github.com/nforshifu234dev/nfsfu234-tour-guide/discussions)*

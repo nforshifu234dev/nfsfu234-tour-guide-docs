@@ -1,0 +1,206 @@
+---
+title: Contributing
+description: How to contribute to nfsfu234-tour-guide open source project.
+keywords: [contributing, open source, pull request, github]
+---
+
+# 🤝 Contributing
+
+Thank you for contributing to **nfsfu234-tour-guide**! Every bug fix, feature, and doc improvement makes a difference.
+
+---
+
+## 🛠️ Getting Started
+
+### 1. Fork & Clone
+
+```bash
+git clone https://github.com/nforshifu234dev/nfsfu234-tour-guide.git
+cd nfsfu234-tour-guide
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Create a Branch
+
+```bash
+git checkout -b feat/your-feature-name
+# or
+git checkout -b fix/your-bug-fix
+# or
+git checkout -b docs/what-you-updated
+```
+
+---
+
+## 📁 Project Structure
+
+```
+nfsfu234-tour-guide/
+├── src/
+│   ├── index.tsx        # Main Tour component
+│   └── index.d.ts       # TypeScript definitions
+├── dist/                # Build output (auto-generated)
+├── README.md            # Main documentation
+├── CHANGELOG.md         # Version history
+├── MIGRATION.md         # v0.x → v1.0 guide
+└── package.json
+```
+
+---
+
+## 🔧 Development Workflow
+
+### Build the Package
+```bash
+npm run build
+```
+
+### Test Locally
+```bash
+# Link the package
+npm link
+
+# In your test project
+npm link nfsfu234-tour-guide
+
+# Test your changes
+npm run dev
+```
+
+### Verify Build Before PR
+```bash
+npm run build
+# Check dist/ folder is generated correctly
+```
+
+---
+
+## ✍️ Commit Convention
+
+We use [Conventional Commits](https://www.conventionalcommits.org/) — this drives automated versioning via `standard-version`.
+
+| Prefix | Version Bump | Example |
+|--------|-------------|---------|
+| `feat:` | Minor (0.2.x → 0.3.0) | `feat: add RTL support` |
+| `fix:` | Patch (0.2.21 → 0.2.22) | `fix: tooltip off-screen on mobile` |
+| `docs:` | None | `docs: update README examples` |
+| `chore:` | None | `chore: update dependencies` |
+| `refactor:` | None | `refactor: simplify positioning logic` |
+| `BREAKING CHANGE:` | Major (0.x → 1.0.0) | In commit body |
+
+### Good commit examples:
+```bash
+git commit -m "feat: add keyboard navigation support"
+git commit -m "fix: welcome screen backdrop scrolls on mobile"
+git commit -m "docs: add SaaS onboarding example"
+git commit -m "chore: bump typescript to 5.4"
+```
+
+### Breaking change:
+```bash
+git commit -m "feat: redesign theme API
+
+BREAKING CHANGE: removed className props, use customTheme instead"
+```
+
+---
+
+## 🔁 Submitting a Pull Request
+
+### 1. Push Your Branch
+```bash
+git push origin feat/your-feature-name
+```
+
+### 2. Open a PR on GitHub
+- **Target:** `main` branch
+- **Title:** Follow conventional format — `feat: add X` or `fix: resolve Y`
+- **Description template:**
+
+```markdown
+## What Changed
+- Brief description of changes
+
+## Why
+- The problem this solves
+
+## Testing
+- [ ] Builds successfully (`npm run build`)
+- [ ] Tested in a real project
+- [ ] TypeScript types updated if needed
+- [ ] README updated if needed
+
+Closes #123
+```
+
+### 3. Automated Checks
+- ✅ Build must pass
+- ✅ PR title must be conventional commit format
+- ✅ Changelog auto-generated on merge
+
+---
+
+## 🌱 First-Time Contributors
+
+New to open source? You're in the right place! 💖
+
+- Look for [`good first issue`](https://github.com/nforshifu234dev/nfsfu234-tour-guide/labels/good%20first%20issue) labels
+- Comment on an issue: "I'd like to work on this!"
+- Ask questions — no judgment here 🙌
+
+---
+
+## 🎯 High Priority Areas
+
+Things we'd love help with:
+
+- ♿ **Accessibility** — ARIA labels, keyboard navigation, screen reader support
+- 📱 **Mobile** — Better positioning on small screens
+- 🌍 **i18n** — Built-in language utilities
+- 🎨 **Themes** — More built-in theme presets
+- ✅ **Tests** — Unit and integration test coverage
+- 📝 **Docs** — Examples, guides, tutorials
+
+---
+
+## 🐛 Reporting Bugs
+
+Before opening an issue:
+1. Check [existing issues](https://github.com/nforshifu234dev/nfsfu234-tour-guide/issues)
+2. Test with the latest version
+
+**Bug report should include:**
+- Library version (`npm list nfsfu234-tour-guide`)
+- React version
+- Browser & OS
+- Minimal code example
+- Error messages / screenshots
+
+---
+
+## 💡 Feature Requests
+
+Open an issue with the `enhancement` label. Include:
+- **What:** The feature you want
+- **Why:** The problem it solves
+- **How:** Optional — your proposed implementation
+
+---
+
+## 📜 Code of Conduct
+
+Be respectful, inclusive, and collaborative.
+We follow the [Contributor Covenant](https://www.contributor-covenant.org/).
+
+---
+
+## 💛 Thank You
+
+Your contributions make **nfsfu234-tour-guide** better for developers worldwide.
+
+Built with ❤️ by [NFORSHIFU234 Dev](https://github.com/nforshifu234dev) and contributors like you.

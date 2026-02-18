@@ -1,0 +1,421 @@
+---
+title: SaaS Onboarding
+description: A complete SaaS onboarding flow example using nfsfu234-tour-guide.
+keywords: [saas, onboarding, product tour, user onboarding flow]
+---
+
+# SaaS Onboarding Example
+
+Production-ready onboarding flow with localStorage persistence and analytics tracking.
+
+---
+
+## Complete Onboarding Component
+
+```tsx filename="components/OnboardingTour.tsx"
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function OnboardingTour() {
+  const [showTour, setShowTour] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+
+    // Check if user has completed onboarding
+    const hasCompletedOnboarding = localStorage.getItem('onboarding_completed');
+    const tourSkippedAt = localStorage.getItem('onboarding_skipped_at');
+
+    // Show tour if:
+    // 1. Never completed AND
+    // 2. Never skipped OR skipped more than 7 days ago
+    if (!hasCompletedOnboarding) {
+      if (!tourSkippedAt) {
+        setShowTour(true);
+      } else {
+        const skippedDate = new Date(tourSkippedAt);
+        const daysSinceSkipped = (Date.now() - skippedDate.getTime()) / (1000 * 60 * 60 * 24);
+        
+        if (daysSinceSkipped > 7) {
+          setShowTour(true);
+        }
+      }
+    }
+  }, []);
+
+  const handleComplete = () => {
+    // Mark as completed
+    localStorage.setItem('onboarding_completed', 'true');
+    localStorage.setItem('onboarding_completed_at', new Date().toISOString());
+    
+    // Track completion
+    if (typeof window !== 'undefined' && (window as any).analytics) {
+      (window as any).analytics.track('Onboarding Completed', {
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    setShowTour(false);
+  };
+
+  const handleSkip = () => {
+    // Mark as skipped (can show again later)
+    localStorage.setItem('onboarding_skipped_at', new Date().toISOString());
+    
+    // Track skip
+    if (typeof window !== 'undefined' && (window as any).analytics) {
+      (window as any).analytics.track('Onboarding Skipped', {
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    setShowTour(false);
+  };
+
+  const handleStepChange = (stepIndex: number) => {
+    // Track step views
+    if (typeof window !== 'undefined' && (window as any).analytics) {
+      (window as any).analytics.track('Onboarding Step Viewed', {
+        step: stepIndex + 1,
+        stepName: steps[stepIndex]?.target,
+      });
+    }
+  };
+
+  const steps = [
+    {
+      target: '#dashboard',
+      content: 'This is your dashboard. See your key metrics and recent activity at a glance.',
+      contentMobile: 'Your dashboard overview',
+      position: 'bottom',
+    },
+    {
+      target: '#create-project',
+      content: 'Create your first project here. Projects help you organize your work.',
+      contentMobile: 'Create projects here',
+      position: 'bottom',
+    },
+    {
+      target: '#team-invite',
+      content: 'Invite team members to collaborate. Click here to send invitations.',
+      contentMobile: 'Invite your team',
+      position: 'left',
+    },
+    {
+      target: '#integrations',
+      content: 'Connect with tools you already use like Slack, GitHub, and more.',
+      contentMobile: 'Connect integrations',
+      position: 'right',
+      device: 'desktop',
+    },
+    {
+      target: '#settings',
+      content: 'Customize your workspace settings, billing, and preferences.',
+      contentMobile: 'Your settings',
+      position: 'bottom',
+    },
+  ];
+
+  if (!mounted) return null;
+
+  return (
+    <Tour
+      tourId="saas-onboarding-v2"
+      isActive={showTour}
+      steps={steps}
+      theme="dark"
+      accentColor="#10b981"
+      showProgress={true}
+      welcomeScreen={{
+        enabled: true,
+        title: 'Welcome to ProductName! 🎉',
+        message: 'Thanks for signing up! Let me show you around so you can get started quickly. This will only take 60 seconds.',
+        startButtonText: 'Show Me Around',
+      }}
+      buttonLabels={{
+        next: 'Next →',
+        previous: '← Back',
+        skip: 'Skip Tour',
+        finish: 'Start Building! 🚀',
+      }}
+      onStart={() => {
+        if (typeof window !== 'undefined' && (window as any).analytics) {
+          (window as any).analytics.track('Onboarding Started');
+        }
+      }}
+      onStepChange={handleStepChange}
+      onSkip={handleSkip}
+      onComplete={handleComplete}
+    />
+  );
+}
+```
+
+---
+
+## Usage in Next.js App
+
+```tsx filename="app/dashboard/page.tsx"
+import OnboardingTour from '@/components/OnboardingTour';
+
+export default function DashboardPage() {
+  return (
+    <>
+      <OnboardingTour />
+      
+      <div id="dashboard">
+        {/* Dashboard content */}
+      </div>
+      
+      <button id="create-project">
+        Create Project
+      </button>
+      
+      <button id="team-invite">
+        Invite Team
+      </button>
+      
+      <nav id="integrations">
+        {/* Integrations */}
+      </nav>
+      
+      <div id="settings">
+        {/* Settings */}
+      </div>
+    </>
+  );
+}
+```
+
+---
+
+## Manual Trigger Button
+
+Allow users to restart the tour:
+
+```tsx filename="components/HelpMenu.tsx"
+'use client';
+
+export default function HelpMenu() {
+  const restartTour = () => {
+    // Clear completion flags
+    localStorage.removeItem('onboarding_completed');
+    localStorage.removeItem('onboarding_skipped_at');
+    
+    // Reload page to trigger tour
+    window.location.reload();
+  };
+
+  return (
+    <div className="help-menu">
+      <button onClick={restartTour}>
+        🎓 Restart Product Tour
+      </button>
+    </div>
+  );
+}
+```
+
+---
+
+## Analytics Integration
+
+### Segment
+```tsx
+// Track with Segment
+if (window.analytics) {
+  window.analytics.track('Onboarding Completed', {
+    userId: user.id,
+    completedAt: new Date().toISOString(),
+    stepsViewed: 5,
+  });
+}
+```
+
+### Google Analytics
+```tsx
+// Track with GA4
+if (window.gtag) {
+  window.gtag('event', 'onboarding_completed', {
+    event_category: 'engagement',
+    event_label: 'product_tour',
+  });
+}
+```
+
+### Mixpanel
+```tsx
+// Track with Mixpanel
+if (window.mixpanel) {
+  window.mixpanel.track('Onboarding Completed', {
+    'Onboarding Version': 'v2',
+    'Steps Completed': 5,
+  });
+}
+```
+
+### PostHog
+```tsx
+// Track with PostHog
+if (window.posthog) {
+  window.posthog.capture('onboarding_completed', {
+    onboarding_version: 'v2',
+    steps_completed: 5,
+  });
+}
+```
+
+---
+
+## Advanced Features
+
+### User Segmentation
+
+Show different tours based on user type:
+
+```tsx
+const getUserTourSteps = (userRole: string) => {
+  const commonSteps = [
+    { target: '#dashboard', content: 'Your dashboard' },
+  ];
+
+  const roleSpecificSteps = {
+    admin: [
+      { target: '#admin-panel', content: 'Admin controls' },
+      { target: '#user-management', content: 'Manage users' },
+    ],
+    user: [
+      { target: '#my-tasks', content: 'Your assigned tasks' },
+    ],
+  };
+
+  return [...commonSteps, ...(roleSpecificSteps[userRole] || [])];
+};
+
+<Tour steps={getUserTourSteps(user.role)} />
+```
+
+### Progressive Onboarding
+
+Show different tours at different stages:
+
+```tsx
+const getOnboardingStage = () => {
+  if (!localStorage.getItem('stage_1_completed')) return 'stage_1';
+  if (!localStorage.getItem('stage_2_completed')) return 'stage_2';
+  return 'completed';
+};
+
+const stage1Steps = [
+  { target: '#basics', content: 'Let\'s start with the basics' },
+];
+
+const stage2Steps = [
+  { target: '#advanced', content: 'Now let\'s explore advanced features' },
+];
+
+const stage = getOnboardingStage();
+
+if (stage === 'stage_1') {
+  return <Tour steps={stage1Steps} onComplete={() => {
+    localStorage.setItem('stage_1_completed', 'true');
+  }} />;
+}
+```
+
+### Feature Announcements
+
+Show tours for new features:
+
+```tsx
+const showFeatureTour = () => {
+  const lastVersion = localStorage.getItem('last_seen_version');
+  const currentVersion = '2.0.0';
+  
+  if (lastVersion !== currentVersion) {
+    return true;
+  }
+  return false;
+};
+
+if (showFeatureTour()) {
+  <Tour
+    steps={newFeatureSteps}
+    welcomeScreen={{
+      enabled: true,
+      title: 'New Features! 🎉',
+      message: 'Check out what\'s new in version 2.0',
+    }}
+    onComplete={() => {
+      localStorage.setItem('last_seen_version', '2.0.0');
+    }}
+  />
+}
+```
+
+---
+
+## Metrics to Track
+
+### Completion Metrics
+- **Completion Rate**: Users who finish / Users who start
+- **Skip Rate**: Users who skip / Total users shown tour
+- **Average Steps Viewed**: Average steps before skip/complete
+- **Time to Complete**: How long users take
+
+### Behavioral Metrics
+- **Feature Adoption**: Usage of features shown in tour
+- **Retention**: Return rate of users who completed vs skipped
+- **Support Tickets**: Reduction after tour implementation
+
+### Example Dashboard Query (SQL)
+```sql
+SELECT 
+  COUNT(CASE WHEN event = 'Onboarding Completed' THEN 1 END) as completed,
+  COUNT(CASE WHEN event = 'Onboarding Skipped' THEN 1 END) as skipped,
+  COUNT(CASE WHEN event = 'Onboarding Started' THEN 1 END) as started,
+  ROUND(100.0 * COUNT(CASE WHEN event = 'Onboarding Completed' THEN 1 END) / 
+    NULLIF(COUNT(CASE WHEN event = 'Onboarding Started' THEN 1 END), 0), 2) as completion_rate
+FROM analytics_events
+WHERE created_at >= NOW() - INTERVAL '30 days';
+```
+
+---
+
+## Best Practices
+
+### 1. Keep It Short
+- **3-5 steps max** for initial onboarding
+- Focus on "must know" features
+- Save advanced features for later
+
+### 2. Personalize
+- Show relevant steps based on user role
+- Skip steps for features they can't access
+- Adapt messaging to use case
+
+### 3. Allow Re-triggering
+- Add "Take Tour Again" in help menu
+- Show tour again after major updates
+- Let users restart if they skip
+
+### 4. Track Everything
+- Monitor completion rates
+- Identify drop-off points
+- A/B test different tour flows
+
+### 5. Test on Real Users
+- Beta test before full rollout
+- Collect feedback
+- Iterate based on data
+
+---
+
+## Next Steps
+
+- [Mobile-Aware Example](/examples/mobile-aware) - Make it responsive
+- [i18n Example](/examples/i18n) - Multi-language support
+- [API Reference](/api-reference) - Full configuration options

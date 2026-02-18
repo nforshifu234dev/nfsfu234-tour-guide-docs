@@ -1,0 +1,266 @@
+---
+title: Custom Theme
+description: Customize colors and styles using the customTheme prop.
+keywords: [custom theme, theming, colors, styles, customTheme]
+---
+
+# Custom Theme Example
+
+Create a branded tour that matches your design system.
+
+---
+
+## Example: Purple Brand Theme
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function CustomThemeExample() {
+  const [showTour, setShowTour] = useState(true);
+
+  const steps = [
+    {
+      target: '#hero',
+      content: 'Welcome to our purple-branded experience!',
+      position: 'bottom',
+    },
+    {
+      target: '#features',
+      content: 'Check out these amazing features.',
+      position: 'top',
+    },
+  ];
+
+  return (
+    <Tour
+      isActive={showTour}
+      steps={steps}
+      theme="custom"
+      customTheme={{
+        backdrop: 'rgba(88, 28, 135, 0.85)',        // purple-900
+        tooltipBg: '#3b0764',                        // purple-950
+        tooltipText: '#faf5ff',                      // purple-50
+        tooltipBorder: '#7e22ce',                    // purple-700
+        buttonBg: '#581c87',                         // purple-800
+        buttonText: '#ffffff',
+        progressBar: '#6b21a8',                      // purple-800
+        highlightRing: 'rgba(168, 85, 247, 0.7)',   // purple-500
+      }}
+      accentColor="#a855f7"                          // purple-500
+      welcomeScreen={{
+        enabled: true,
+        title: 'Welcome to Purple Co! 💜',
+        message: 'Let me show you around our platform.',
+      }}
+      onComplete={() => setShowTour(false)}
+      onSkip={() => setShowTour(false)}
+    />
+  );
+}
+```
+
+---
+
+## Pre-Made Theme Examples
+
+### 🔵 Blue Corporate Theme
+```tsx
+<Tour
+  theme="custom"
+  customTheme={{
+    backdrop: 'rgba(30, 58, 138, 0.8)',
+    tooltipBg: '#1e3a8a',
+    tooltipText: '#dbeafe',
+    tooltipBorder: '#3b82f6',
+    buttonBg: '#1e40af',
+    buttonText: '#ffffff',
+    progressBar: '#3b82f6',
+    highlightRing: 'rgba(59, 130, 246, 0.6)',
+  }}
+  accentColor="#3b82f6"
+  steps={steps}
+/>
+```
+
+### 🔴 Red Alert Theme
+```tsx
+<Tour
+  theme="custom"
+  customTheme={{
+    backdrop: 'rgba(127, 29, 29, 0.85)',
+    tooltipBg: '#7f1d1d',
+    tooltipText: '#fee2e2',
+    tooltipBorder: '#dc2626',
+    buttonBg: '#991b1b',
+    buttonText: '#ffffff',
+    progressBar: '#dc2626',
+    highlightRing: 'rgba(239, 68, 68, 0.7)',
+  }}
+  accentColor="#ef4444"
+  steps={steps}
+/>
+```
+
+### 🟢 Green Success Theme
+```tsx
+<Tour
+  theme="custom"
+  customTheme={{
+    backdrop: 'rgba(20, 83, 45, 0.8)',
+    tooltipBg: '#14532d',
+    tooltipText: '#dcfce7',
+    tooltipBorder: '#16a34a',
+    buttonBg: '#15803d',
+    buttonText: '#ffffff',
+    progressBar: '#22c55e',
+    highlightRing: 'rgba(34, 197, 94, 0.6)',
+  }}
+  accentColor="#22c55e"
+  steps={steps}
+/>
+```
+
+### 🟡 Yellow Warning Theme
+```tsx
+<Tour
+  theme="custom"
+  customTheme={{
+    backdrop: 'rgba(113, 63, 18, 0.85)',
+    tooltipBg: '#713f12',
+    tooltipText: '#fef3c7',
+    tooltipBorder: '#f59e0b',
+    buttonBg: '#92400e',
+    buttonText: '#ffffff',
+    progressBar: '#fbbf24',
+    highlightRing: 'rgba(251, 191, 36, 0.6)',
+  }}
+  accentColor="#f59e0b"
+  steps={steps}
+/>
+```
+
+### 🌑 High Contrast Dark
+```tsx
+<Tour
+  theme="custom"
+  customTheme={{
+    backdrop: 'rgba(0, 0, 0, 0.95)',
+    tooltipBg: '#000000',
+    tooltipText: '#ffffff',
+    tooltipBorder: '#ffffff',
+    buttonBg: '#1a1a1a',
+    buttonText: '#ffffff',
+    progressBar: '#404040',
+    highlightRing: 'rgba(255, 255, 255, 0.8)',
+  }}
+  accentColor="#ffffff"
+  steps={steps}
+/>
+```
+
+### ☀️ High Contrast Light
+```tsx
+<Tour
+  theme="custom"
+  customTheme={{
+    backdrop: 'rgba(255, 255, 255, 0.95)',
+    tooltipBg: '#ffffff',
+    tooltipText: '#000000',
+    tooltipBorder: '#000000',
+    buttonBg: '#f5f5f5',
+    buttonText: '#000000',
+    progressBar: '#e5e5e5',
+    highlightRing: 'rgba(0, 0, 0, 0.3)',
+  }}
+  accentColor="#000000"
+  steps={steps}
+/>
+```
+
+---
+
+## Using Tailwind Colors
+
+If you're using Tailwind CSS, reference colors directly:
+
+```tsx
+import resolveConfig from 'tailwindcss/resolveConfig';
+import tailwindConfig from './tailwind.config';
+
+const fullConfig = resolveConfig(tailwindConfig);
+const colors = fullConfig.theme.colors;
+
+<Tour
+  theme="custom"
+  customTheme={{
+    backdrop: `rgba(${colors.purple[900]}, 0.85)`,
+    tooltipBg: colors.purple[950],
+    tooltipText: colors.purple[50],
+    // ...
+  }}
+  accentColor={colors.purple[500]}
+  steps={steps}
+/>
+```
+
+---
+
+## ThemeConfig Reference
+
+```tsx
+interface ThemeConfig {
+  backdrop?: string;        // Full-screen overlay behind tour
+  tooltipBg?: string;       // Tooltip background color
+  tooltipText?: string;     // Main text color
+  tooltipBorder?: string;   // Tooltip border color
+  buttonBg?: string;        // Secondary buttons (Back, Skip)
+  buttonText?: string;      // Button text color
+  progressBar?: string;     // Progress bar track color
+  highlightRing?: string;   // Glow around target element
+}
+```
+
+---
+
+## Tips for Good Themes
+
+### 1. Sufficient Contrast
+Ensure text is readable on backgrounds:
+- Dark bg → Light text
+- Light bg → Dark text
+- Minimum contrast ratio: 4.5:1 (WCAG AA)
+
+### 2. Consistent with Brand
+Match your existing design system:
+- Use brand primary color for `accentColor`
+- Use brand dark/light for `tooltipBg`
+- Keep highlight color visible but not distracting
+
+### 3. Test in Dark Mode
+If your app supports dark mode, create two theme configs:
+
+```tsx
+const isDarkMode = useTheme();
+
+<Tour
+  theme="custom"
+  customTheme={isDarkMode ? darkTheme : lightTheme}
+  steps={steps}
+/>
+```
+
+### 4. Accessibility
+- High contrast for low vision users
+- Don't rely on color alone to convey meaning
+- Test with screen readers
+
+---
+
+## Next Steps
+
+- [API Reference](/api-reference#custom-themes) - Full theme documentation
+- [Examples](/examples) - More theme examples
+- [SaaS Onboarding](/examples/saas-onboarding) - Production theme example

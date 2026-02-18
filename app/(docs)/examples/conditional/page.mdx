@@ -1,0 +1,252 @@
+---
+title: Conditional Steps
+description: Show or hide tour steps based on conditions with nfsfu234-tour-guide.
+keywords: [conditional steps, dynamic tour, show hide steps]
+---
+
+# Conditional Steps
+
+Show different tour steps based on user state, permissions, or app configuration.
+
+---
+
+## Based on User Role
+
+```tsx
+'use client';
+
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function RoleBasedTour({ user }) {
+  const baseSteps = [
+    { target: '#dashboard', content: 'Welcome to your dashboard!' },
+  ];
+
+  const adminSteps = [
+    { target: '#admin-panel', content: 'Access admin controls here.' },
+    { target: '#user-management', content: 'Manage team members and permissions.' },
+  ];
+
+  const userSteps = [
+    { target: '#my-projects', content: 'View and manage your assigned projects.' },
+  ];
+
+  const viewerSteps = [
+    { target: '#view-only', content: 'You have view-only access. Contact an admin for edit access.' },
+  ];
+
+  const getSteps = () => {
+    switch (user.role) {
+      case 'admin': return [...baseSteps, ...adminSteps];
+      case 'user': return [...baseSteps, ...userSteps];
+      case 'viewer': return [...baseSteps, ...viewerSteps];
+      default: return baseSteps;
+    }
+  };
+
+  return <Tour steps={getSteps()} />;
+}
+```
+
+---
+
+## Based on Feature Flags
+
+```tsx
+'use client';
+
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function FeatureFlagTour({ features }) {
+  const steps = [
+    { target: '#dashboard', content: 'Your dashboard' },
+
+    // Only show if feature is enabled
+    ...(features.newDashboard
+      ? [{ target: '#new-dashboard', content: '🎉 Check out the redesigned dashboard!' }]
+      : []
+    ),
+    ...(features.aiAssistant
+      ? [{ target: '#ai-chat', content: '🤖 Try our new AI assistant!' }]
+      : []
+    ),
+    ...(features.advancedAnalytics
+      ? [{ target: '#analytics', content: '📊 View advanced analytics.' }]
+      : []
+    ),
+
+    { target: '#settings', content: 'Customize your preferences.' },
+  ];
+
+  return <Tour steps={steps} />;
+}
+```
+
+---
+
+## Based on Subscription Plan
+
+```tsx
+'use client';
+
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function PlanBasedTour({ plan }) {
+  const freeSteps = [
+    { target: '#dashboard', content: 'Your dashboard' },
+    { target: '#projects', content: 'Manage up to 3 projects on the free plan.' },
+    { target: '#upgrade', content: '⭐ Upgrade to Pro for unlimited projects!' },
+  ];
+
+  const proSteps = [
+    { target: '#dashboard', content: 'Your dashboard' },
+    { target: '#projects', content: 'Unlimited projects available.' },
+    { target: '#advanced-features', content: 'Access Pro-only features here.' },
+    { target: '#priority-support', content: 'Priority support available 24/7.' },
+  ];
+
+  const enterpriseSteps = [
+    ...proSteps,
+    { target: '#sso', content: 'Single Sign-On for your team.' },
+    { target: '#dedicated-support', content: 'Your dedicated account manager.' },
+  ];
+
+  const getSteps = () => {
+    if (plan === 'enterprise') return enterpriseSteps;
+    if (plan === 'pro') return proSteps;
+    return freeSteps;
+  };
+
+  return <Tour steps={getSteps()} />;
+}
+```
+
+---
+
+## Based on Onboarding Progress
+
+Show different steps as users complete setup stages:
+
+```tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function ProgressiveTour() {
+  const [stage, setStage] = useState(1);
+
+  useEffect(() => {
+    const saved = parseInt(localStorage.getItem('onboarding_stage') || '1');
+    setStage(saved);
+  }, []);
+
+  const stageSteps = {
+    1: [
+      { target: '#profile', content: "Let's set up your profile first." },
+      { target: '#avatar', content: 'Add a profile picture.' },
+    ],
+    2: [
+      { target: '#create-project', content: 'Now create your first project.' },
+      { target: '#invite-team', content: 'Invite your team members.' },
+    ],
+    3: [
+      { target: '#integrations', content: 'Connect your favourite tools.' },
+      { target: '#api-keys', content: 'Generate API keys if needed.' },
+    ],
+  };
+
+  const handleComplete = () => {
+    const next = stage + 1;
+    localStorage.setItem('onboarding_stage', next.toString());
+    setStage(next);
+  };
+
+  if (stage > 3) return null;
+
+  return (
+    <Tour
+      steps={stageSteps[stage] || []}
+      welcomeScreen={{
+        enabled: true,
+        title: `Setup Step ${stage} of 3`,
+        message: "Let's continue your setup.",
+      }}
+      onComplete={handleComplete}
+    />
+  );
+}
+```
+
+---
+
+## Dynamic Content Based on User Data
+
+```tsx
+'use client';
+
+import { Tour } from 'nfsfu234-tour-guide';
+
+export default function DynamicTour({ stats }) {
+  const steps = [
+    {
+      target: '#projects',
+      content: stats.projectsCount === 0
+        ? "You haven't created any projects yet. Let's create your first one!"
+        : `You have ${stats.projectsCount} project${stats.projectsCount > 1 ? 's' : ''}. Great work!`,
+    },
+    {
+      target: '#team',
+      content: stats.teamSize === 1
+        ? "You're working solo. Invite team members to collaborate!"
+        : `You have ${stats.teamSize} team members. Manage roles here.`,
+    },
+    {
+      target: '#storage',
+      content: stats.storageUsed > 80
+        ? '⚠️ Running low on storage. Consider upgrading your plan.'
+        : `You're using ${stats.storageUsed}% of your storage.`,
+    },
+  ];
+
+  return <Tour steps={steps} />;
+}
+```
+
+---
+
+## Best Practices
+
+### Show Only Relevant Steps
+```tsx
+// ✅ Good — 3-5 targeted steps
+const steps = user.isAdmin ? adminSteps : userSteps;
+
+// ❌ Bad — 20 steps regardless of relevance
+const steps = [...baseSteps, ...adminSteps, ...userSteps, ...betaSteps];
+```
+
+### Always Filter Empty Arrays
+```tsx
+const steps = [
+  { target: '#hero', content: 'Welcome' },
+  ...(hasFeature ? [{ target: '#feature', content: 'New feature!' }] : []),
+].filter(Boolean);
+```
+
+### Track What Was Shown
+```tsx
+analytics.track('Tour Shown', {
+  userRole: user.role,
+  plan: user.plan,
+  stepsShown: steps.length,
+});
+```
+
+---
+
+## Next Steps
+
+- [SaaS Onboarding](/examples/saas-onboarding) - Full production example
+- [i18n](/examples/i18n) - Multi-language support
+- [API Reference](/api-reference) - All configuration options

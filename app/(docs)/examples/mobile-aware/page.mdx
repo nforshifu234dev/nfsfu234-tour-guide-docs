@@ -1,0 +1,222 @@
+---
+title: Mobile Aware
+description: Device-specific steps and mobile-optimized content for your tours.
+keywords: [mobile, responsive, device specific, mobile tour]
+---
+
+# Mobile-Aware Tour
+
+Create tours that adapt to different devices with device-specific steps and content.
+
+---
+
+## Device-Specific Steps
+
+Show different steps on desktop vs mobile:
+
+```tsx
+'use client';
+
+import { Tour } from 'nfsfu234-tour-guide';
+
+const steps = [
+  {
+    target: '#hero',
+    content: 'Welcome to our platform!',
+    device: 'both',
+  },
+  {
+    target: '#desktop-sidebar',
+    content: 'Use the sidebar to navigate between sections.',
+    device: 'desktop', // Desktop only
+  },
+  {
+    target: '#mobile-menu',
+    content: 'Tap the menu icon to navigate.',
+    device: 'mobile', // Mobile only
+  },
+  {
+    target: '#search',
+    content: 'Search for anything here.',
+    device: 'both',
+  },
+];
+
+export default function MobileAwareTour() {
+  return <Tour steps={steps} theme="dark" accentColor="#10b981" />;
+}
+```
+
+---
+
+## Mobile-Specific Content
+
+Use shorter text on mobile devices:
+
+```tsx
+const steps = [
+  {
+    target: '#pricing',
+    content: 'Choose from our flexible pricing plans. We offer monthly and annual billing.',
+    contentMobile: 'Pick your plan!',
+    device: 'both',
+  },
+  {
+    target: '#features',
+    content: 'Our platform includes advanced analytics, team collaboration tools, and API access.',
+    contentMobile: 'Key features here',
+    device: 'both',
+  },
+];
+```
+
+---
+
+## Complete Responsive Example
+
+```tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Tour } from 'nfsfu234-tour-guide';
+
+function isMobileDevice() {
+  return typeof window !== 'undefined' && window.innerWidth < 768;
+}
+
+export default function ResponsiveTour() {
+  const [showTour, setShowTour] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(isMobileDevice());
+    const hasSeenTour = localStorage.getItem('hasSeenTour');
+    if (!hasSeenTour) setShowTour(true);
+  }, []);
+
+  const handleComplete = () => {
+    localStorage.setItem('hasSeenTour', 'true');
+    setShowTour(false);
+  };
+
+  const steps = [
+    {
+      target: '#hero',
+      content: 'Welcome! Let me show you around the platform.',
+      contentMobile: 'Welcome! Quick tour.',
+      position: 'bottom',
+      device: 'both',
+    },
+    {
+      target: '#main-nav',
+      content: 'Navigate between Dashboard, Projects, and Settings using this menu.',
+      position: 'bottom',
+      device: 'desktop',
+    },
+    {
+      target: '#hamburger-menu',
+      content: 'Tap here to open the navigation menu.',
+      position: 'bottom',
+      device: 'mobile',
+    },
+    {
+      target: '#create-button',
+      content: 'Click here to create a new project.',
+      contentMobile: 'Create new projects here.',
+      position: isMobile ? 'bottom' : 'left',
+      device: 'both',
+    },
+  ];
+
+  return (
+    <Tour
+      isActive={showTour}
+      steps={steps}
+      theme="dark"
+      accentColor="#10b981"
+      welcomeScreen={{
+        enabled: true,
+        title: isMobile ? 'Welcome! 👋' : 'Welcome to the Platform! 👋',
+        message: isMobile
+          ? 'Quick 30-second tour.'
+          : 'Let me give you a quick tour. This will only take 60 seconds.',
+        startButtonText: isMobile ? 'Start' : 'Start Tour',
+      }}
+      buttonLabels={{
+        next: isMobile ? 'Next' : 'Next →',
+        previous: isMobile ? 'Back' : '← Back',
+        skip: 'Skip',
+        finish: isMobile ? 'Done!' : 'Got it! 🎉',
+      }}
+      onComplete={handleComplete}
+      onSkip={handleComplete}
+    />
+  );
+}
+```
+
+---
+
+## Device Detection
+
+The library uses **768px** as the mobile breakpoint:
+- `width < 768px` → Mobile
+- `width >= 768px` → Desktop
+
+```tsx
+{ device: 'desktop' } // Desktop only
+{ device: 'mobile' }  // Mobile only
+{ device: 'both' }    // All devices (default)
+```
+
+---
+
+## Best Practices
+
+### Keep Mobile Content Short
+```tsx
+// ✅ Good
+{ contentMobile: 'Use sidebar to navigate' }
+
+// ❌ Too long for mobile
+{ contentMobile: 'This is still a very long explanation that will be hard to read on a small screen...' }
+```
+
+### Adjust Position for Mobile
+```tsx
+const isMobile = window.innerWidth < 768;
+
+{
+  target: '#button',
+  position: isMobile ? 'bottom' : 'right',
+}
+```
+
+### Skip Non-Essential Steps on Mobile
+```tsx
+{
+  target: '#advanced-settings',
+  content: 'Configure advanced options here.',
+  device: 'desktop', // Skip this step on mobile
+}
+```
+
+---
+
+## Testing on Mobile
+
+**Chrome DevTools:**
+1. Open DevTools (F12)
+2. Click device toolbar (Ctrl+Shift+M)
+3. Select a mobile device
+4. Reload page
+
+Always test on real devices — iOS Safari, Android Chrome, different screen sizes.
+
+---
+
+## Next Steps
+
+- [SaaS Onboarding](/examples/saas-onboarding) - Complete mobile-friendly flow
+- [API Reference](/api-reference) - Full step configuration
+- [Custom Themes](/examples/custom-theme) - Theme examples

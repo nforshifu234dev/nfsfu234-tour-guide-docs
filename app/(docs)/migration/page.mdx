@@ -1,0 +1,234 @@
+---
+title: Migration Guide
+description: Upgrade guide from v0.x to v1.0 of nfsfu234-tour-guide.
+keywords: [migration, upgrade, v1, breaking changes, changelog]
+---
+
+# 🚀 Migration Guide: v0.x → v1.0
+
+This guide helps you upgrade from `nfsfu234-tour-guide` v0.2.x to v1.0.
+
+---
+
+## 🎯 TL;DR
+
+**v1.0 is a complete rewrite** with these major changes:
+- ✅ Zero dependencies (removed framer-motion, lucide-react)
+- ✅ New custom theme system
+- ✅ Improved tooltip positioning with Intersection Observer
+- ⚠️ Breaking API changes (see below)
+
+**Upgrade time:** ~15 minutes for most projects
+
+---
+
+## 📦 Installation
+
+```bash
+npm install nfsfu234-tour-guide@latest
+# or
+yarn add nfsfu234-tour-guide@latest
+# or
+pnpm add nfsfu234-tour-guide@latest
+```
+
+---
+
+## 🔄 Breaking Changes
+
+### 1. Removed Props
+
+| v0.x Prop | Status | v1.0 Alternative |
+|-----------|--------|------------------|
+| `tourDots` | ❌ Removed | Use `showProgress={true}` (default) |
+| `tourDotsClassName` | ❌ Removed | Not needed |
+| `animation` | ❌ Removed | Built-in smooth transitions |
+| `animationDuration` | ❌ Removed | Fixed to 300ms |
+
+```tsx
+// Before (v0.x)
+<Tour
+  tourDots={true}
+  tourDotsClassName="custom-dots"
+  animation="fade"
+  animationDuration={500}
+/>
+
+// After (v1.0)
+<Tour
+  showProgress={true}
+  // animation is built-in, no config needed
+/>
+```
+
+---
+
+### 2. Theme System Changes
+
+**v0.x:** Inline className overrides
+**v1.0:** Proper `customTheme` config object
+
+```tsx
+// Before (v0.x)
+<Tour
+  theme="dark"
+  overlayClassName="bg-black/80"
+  tooltipClassName="bg-zinc-900 text-white"
+/>
+
+// After (v1.0)
+<Tour
+  theme="custom"
+  customTheme={{
+    backdrop: 'rgba(0, 0, 0, 0.8)',
+    tooltipBg: '#18181b',
+    tooltipText: '#ffffff',
+    tooltipBorder: '#3f3f46',
+    buttonBg: '#27272a',
+    buttonText: '#ffffff',
+    progressBar: '#3f3f46',
+    highlightRing: 'rgba(16, 185, 129, 0.5)',
+  }}
+  accentColor="#10b981"
+/>
+```
+
+---
+
+### 3. Step Interface Changes
+
+**New fields in v1.0:**
+```tsx
+{
+  target: '#hero',
+  content: 'Desktop content here',
+  contentMobile: 'Shorter mobile content', // NEW
+  device: 'both',                           // NEW: 'desktop' | 'mobile' | 'both'
+  // Note: position: 'center' is removed — use 'bottom' instead
+}
+```
+
+---
+
+### 4. Removed Dependencies
+
+v0.x required `framer-motion` and `lucide-react`.
+v1.0 has **zero external dependencies**.
+
+```bash
+# Safe to uninstall if not used elsewhere
+npm uninstall framer-motion lucide-react
+```
+
+---
+
+## ✅ Step-by-Step Migration
+
+### Step 1: Update Package
+```bash
+npm install nfsfu234-tour-guide@latest
+```
+
+### Step 2: Update Props
+```diff
+<Tour
+  steps={steps}
+- tourDots={true}
++ showProgress={true}
+- animation="fade"
+- animationDuration={500}
+  accentColor="#10b981"
+/>
+```
+
+### Step 3: Update Custom Styling
+```diff
+<Tour
+  steps={steps}
+- theme="dark"
+- overlayClassName="custom-overlay"
+- tooltipClassName="custom-tooltip"
++ theme="custom"
++ customTheme={{
++   backdrop: 'rgba(0, 0, 0, 0.9)',
++   tooltipBg: '#1e293b',
++   tooltipText: '#f1f5f9',
++ }}
+/>
+```
+
+### Step 4: Update Steps
+```diff
+const steps = [
+  {
+    target: '#hero',
+    content: 'Welcome!',
++   contentMobile: 'Welcome!', // Optional shorter mobile text
++   device: 'both',             // Optional device filter
+-   position: 'center',         // ❌ Removed
++   position: 'bottom',         // ✅ Use this instead
+  },
+];
+```
+
+---
+
+## 📊 Feature Comparison
+
+| Feature | v0.x | v1.0 |
+|---------|------|------|
+| Bundle Size | ~45KB | ~10KB ✨ |
+| Dependencies | 2 | 0 ✨ |
+| Themes | Light, Dark | Light, Dark, Custom ✨ |
+| Tooltip Positioning | Fixed | Intersection Observer ✨ |
+| Scroll Lock (Welcome) | ❌ | ✅ ✨ |
+| Device Filtering | ❌ | ✅ ✨ |
+| Mobile-Specific Content | ❌ | ✅ ✨ |
+| TypeScript | Partial | Full ✨ |
+
+---
+
+## ✅ Migration Checklist
+
+- [ ] `npm install nfsfu234-tour-guide@latest`
+- [ ] Replace `tourDots` → `showProgress`
+- [ ] Remove `animation` and `animationDuration`
+- [ ] Update custom styling to use `customTheme`
+- [ ] Replace `position: 'center'` with `'bottom'` or `'top'`
+- [ ] Add `device` filtering where needed
+- [ ] Add `contentMobile` for shorter mobile text
+- [ ] Test on desktop and mobile
+- [ ] Uninstall `framer-motion` / `lucide-react` if no longer used
+
+---
+
+## 🐛 Common Migration Issues
+
+### Error: `tourDots is not a valid prop`
+```diff
+- <Tour tourDots={true} />
++ <Tour showProgress={true} />
+```
+
+### Error: `position 'center' is not supported`
+```diff
+- { target: '#hero', position: 'center' }
++ { target: '#hero', position: 'bottom' }
+```
+
+### Custom styles not applying
+```tsx
+// Must set theme="custom" when using customTheme
+<Tour
+  theme="custom"  // ← Required!
+  customTheme={{ tooltipBg: '#yourColor' }}
+/>
+```
+
+---
+
+## 🆘 Need Help?
+
+- [Troubleshooting](/troubleshooting)
+- [GitHub Discussions](https://github.com/nforshifu234dev/nfsfu234-tour-guide/discussions)
+- [Report Issues](https://github.com/nforshifu234dev/nfsfu234-tour-guide/issues)

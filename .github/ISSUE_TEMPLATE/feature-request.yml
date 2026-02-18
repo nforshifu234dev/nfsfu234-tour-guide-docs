@@ -1,0 +1,28 @@
+name: Feature Request
+description: Suggest a new doc page or documentation improvement
+title: "[Feature]: "
+labels: ["enhancement", "help wanted"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What Would You Like to See?
+      description: Describe the new page or improvement you're suggesting.
+      placeholder: E.g., "Add a dedicated page for TypeScript usage examples."
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Why Would This Help?
+      description: How would this benefit other users?
+      placeholder: E.g., "Many users ask about TypeScript types in GitHub issues."
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other details, mockups, or references.
+    validations:
+      required: false
