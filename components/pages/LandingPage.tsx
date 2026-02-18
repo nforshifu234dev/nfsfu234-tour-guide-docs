@@ -188,7 +188,7 @@ export default function App() {
               background: 'linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             }}>
-              Without the bloat.
+              Ship less code.
             </span>
           </h1>
 
