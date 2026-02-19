@@ -413,13 +413,21 @@ export default function MyApp() {
 All interfaces are exported for TypeScript users:
 
 ```tsx
-import Tour, {
-  TourProps,
-  TourStep,
-  WelcomeScreenConfig,
-  ButtonLabels,
-  ThemeConfig,
-} from 'nfsfu234-tour-guide';
+import { Tour, Types } from 'nfsfu234-tour-guide';
+
+// Use types via the Types namespace:
+const steps: Types.TourStep[] = [
+  { target: '#hero', content: 'Welcome!' }
+];
+
+const myTheme: Types.ThemeConfig = {
+  tooltipBg: '#1e293b',
+  tooltipText: '#f1f5f9',
+};
+
+function MyTour(props: Types.TourProps) {
+  return <Tour {...props} />;
+}
 ```
 
 ---

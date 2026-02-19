@@ -34,13 +34,14 @@ export default function OnboardingTour() {
     // 2. Never skipped OR skipped more than 7 days ago
     if (!hasCompletedOnboarding) {
       if (!tourSkippedAt) {
-        setShowTour(true);
+        const timer = setTimeout(() => setShowTour(true), 100);
+        return () => clearTimeout(timer);
       } else {
         const skippedDate = new Date(tourSkippedAt);
         const daysSinceSkipped = (Date.now() - skippedDate.getTime()) / (1000 * 60 * 60 * 24);
-        
         if (daysSinceSkipped > 7) {
-          setShowTour(true);
+          const timer = setTimeout(() => setShowTour(true), 100);
+          return () => clearTimeout(timer);
         }
       }
     }

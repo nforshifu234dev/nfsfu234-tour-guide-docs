@@ -40,7 +40,7 @@ export function LandingPage() {
 
   const activeDemo = tourStep !== null ? demoSteps[tourStep] : null
 
-  const code = `import Tour from 'nfsfu234-tour-guide'
+  const code = `import { Tour } from 'nfsfu234-tour-guide'
 
 const steps = [
   {
