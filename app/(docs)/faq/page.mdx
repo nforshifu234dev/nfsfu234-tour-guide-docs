@@ -119,7 +119,10 @@ Use `localStorage` to track if the user has seen the tour:
 ```tsx
 useEffect(() => {
   const seen = localStorage.getItem('tourCompleted');
-  if (!seen) setShowTour(true);
+  if (!seen) {
+    const timer = setTimeout(() => setShowTour(true), 100);
+    return () => clearTimeout(timer);
+  }
 }, []);
 
 const handleComplete = () => {

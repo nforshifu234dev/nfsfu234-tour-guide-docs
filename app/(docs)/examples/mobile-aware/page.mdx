@@ -91,7 +91,10 @@ export default function ResponsiveTour() {
   useEffect(() => {
     setIsMobile(isMobileDevice());
     const hasSeenTour = localStorage.getItem('hasSeenTour');
-    if (!hasSeenTour) setShowTour(true);
+    if (!hasSeenTour) {
+      const timer = setTimeout(() => setShowTour(true), 100);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   const handleComplete = () => {

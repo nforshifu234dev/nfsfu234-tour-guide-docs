@@ -115,6 +115,41 @@ export default function MyTour() {
 
 ---
 
+### Welcome Screen and Step Tooltip Showing Together
+**Issue:** Both the welcome screen and a step tooltip appear simultaneously.
+
+**Cause:** Conditionally mounting/unmounting `<Tour>` causes the internal
+phase state to reset on every mount, creating a race where both
+`phase === 'welcome'` and `phase === 'active'` render together.
+
+**Solution:** Always keep `<Tour>` in the DOM. Control it only via `isActive`:
+
+```tsx
+// ✅ Correct
+const [isActive, setIsActive] = useState(false);
+
+useEffect(() => {
+  const seen = localStorage.getItem('hasSeenTour') === 'true';
+  if (!seen) {
+    const timer = setTimeout(() => setIsActive(true), 100);
+    return () => clearTimeout(timer);
+  }
+}, []);
+
+return (
+  <>
+    <Tour isActive={isActive} steps={steps} onSkip={handleDone} onComplete={handleDone} />
+    {children}
+  </>
+);
+```
+
+```tsx
+// ❌ Wrong — causes double render on mount
+if (!showTour) return <>{children}</>;
+return <><Tour isActive={true} ... />{children}</>;
+```
+
 ## Positioning Issues
 
 ### Tooltip Appears in Wrong Place

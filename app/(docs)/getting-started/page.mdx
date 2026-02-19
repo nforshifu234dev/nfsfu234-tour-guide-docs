@@ -133,10 +133,10 @@ export default function OnboardingTour() {
   const [showTour, setShowTour] = useState(false);
 
   useEffect(() => {
-    // Check if user has seen the tour
     const hasSeenTour = localStorage.getItem('hasSeenTour');
     if (!hasSeenTour) {
-      setShowTour(true);
+      const timer = setTimeout(() => setShowTour(true), 100);
+      return () => clearTimeout(timer);
     }
   }, []);
 
