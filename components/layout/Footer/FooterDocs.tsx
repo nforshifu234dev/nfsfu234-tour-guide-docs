@@ -66,9 +66,9 @@ export default function FooterDocs() {
                 nforshifu234dev.com ↗
               </a>
             </li>
-            <li><a href="https://nforshifu234dev.com/#projects" target="_blank" className="hover:text-zinc-300 transition-colors">Open-Source Projects</a></li>
-            <li><a href="https://nforshifu234dev.com/#apps" target="_blank" className="hover:text-zinc-300 transition-colors">Public Apps (WishIT)</a></li>
-            <li><a href="https://nforshifu234dev.com/#clients" target="_blank" className="hover:text-zinc-300 transition-colors">Client Work</a></li>
+            <li><a href="https://www.nforshifu234dev.com/projects/open-source" target="_blank" className="hover:text-zinc-300 transition-colors">Open-Source Projects</a></li>
+            <li><a href="https://www.nforshifu234dev.com/projects/apps" target="_blank" className="hover:text-zinc-300 transition-colors">Public Apps (WishIT)</a></li>
+            <li><a href="https://www.nforshifu234dev.com/projects/clients" target="_blank" className="hover:text-zinc-300 transition-colors">Client Work</a></li>
             <li><a href="https://www.youtube.com/@nforshifu234dev" target="_blank" className="hover:text-zinc-300 transition-colors flex items-center gap-1">YouTube ↗</a></li>
             <li><a href="https://instagram.com/nforshifu234dev" target="_blank" className="hover:text-zinc-300 transition-colors flex items-center gap-1">Instagram ↗</a></li>
           </ul>

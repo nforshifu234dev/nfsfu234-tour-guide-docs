@@ -133,17 +133,17 @@ export default function Footer() {
             }}>
               nforshifu234dev.com ↗
             </a>
-            <a href="https://nforshifu234dev.com/#projects" target="_blank" style={{
+            <a href="https://www.nforshifu234dev.com/projects/open-source" target="_blank" style={{
               fontSize: '13px', color: '#52525b', textDecoration: 'none',
             }}>
               Open-Source Projects
             </a>
-            <a href="https://nforshifu234dev.com/#apps" target="_blank" style={{
+            <a href="https://www.nforshifu234dev.com/projects/apps" target="_blank" style={{
               fontSize: '13px', color: '#52525b', textDecoration: 'none',
             }}>
               Public Apps (WishIT)
             </a>
-            <a href="https://nforshifu234dev.com/#clients" target="_blank" style={{
+            <a href="https://www.nforshifu234dev.com/projects/clients" target="_blank" style={{
               fontSize: '13px', color: '#52525b', textDecoration: 'none',
             }}>
               Client Work
