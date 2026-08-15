@@ -113,7 +113,7 @@ export default function App() {
           <span style={{ fontSize: 'clamp(20px, 5vw, 28px)' }}>
             <Image src="/favicon.svg" alt="NFSFU234TourGuide" width={34} height={34} />
           </span>
-          <span>nfsfu234/ <span>tour-guide</span></span>
+          <span>@nfsfu234/<span>tour-guide</span></span>
         </div>
 
         {/* Desktop links */}
