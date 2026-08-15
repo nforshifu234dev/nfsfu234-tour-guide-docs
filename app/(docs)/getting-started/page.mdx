@@ -15,7 +15,7 @@ Get up and running with **NFSFU234TourGuide** in under 5 minutes.
 Install the package using your preferred package manager:
 
 ```bash npm2yarn
-npm install nfsfu234-tour-guide
+npm install @nfsfu234/tour-guide
 ```
 
 **Requirements:**
@@ -29,7 +29,7 @@ npm install nfsfu234-tour-guide
 ### Step 1: Import the Component
 
 ```tsx
-import { Tour } from 'nfsfu234-tour-guide';
+import { Tour } from '@nfsfu234/tour-guide';
 ```
 
 ### Step 2: Define Your Steps
@@ -127,7 +127,7 @@ If you're using **Next.js**, make sure to use the `'use client'` directive:
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Tour } from 'nfsfu234-tour-guide';
+import { Tour } from '@nfsfu234/tour-guide';
 
 export default function OnboardingTour() {
   const [showTour, setShowTour] = useState(false);

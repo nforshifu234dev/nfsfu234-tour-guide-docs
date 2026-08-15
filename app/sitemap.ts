@@ -3,23 +3,44 @@ import { readdirSync, statSync } from 'fs'
 import { join } from 'path'
 import { siteConfig } from '@/config/site'
 
+const EXCLUDED_ROUTES = new Set([
+  '/hello',
+])
+
 function getMdxPages(dir: string, baseRoute = ''): string[] {
   let routes: string[] = []
 
   try {
     const entries = readdirSync(dir)
+
     for (const entry of entries) {
       // skip layout, loading, error files
-      if (['layout.tsx', 'layout.ts', 'error.tsx', 'loading.tsx'].includes(entry)) continue
+      if (
+        ['layout.tsx', 'layout.ts', 'error.tsx', 'loading.tsx'].includes(entry)
+      ) {
+        continue
+      }
 
       const fullPath = join(dir, entry)
       const stat = statSync(fullPath)
 
       if (stat.isDirectory()) {
-        const nested = getMdxPages(fullPath, `${baseRoute}/${entry}`)
+        const nested = getMdxPages(
+          fullPath,
+          `${baseRoute}/${entry}`
+        )
+
         routes.push(...nested)
-      } else if (entry === 'page.mdx' || entry === 'page.md' || entry === 'page.tsx') {
-        routes.push(baseRoute || '/')
+      } else if (
+        entry === 'page.mdx' ||
+        entry === 'page.md' ||
+        entry === 'page.tsx'
+      ) {
+        const route = baseRoute || '/'
+
+        if (!EXCLUDED_ROUTES.has(route)) {
+          routes.push(route)
+        }
       }
     }
   } catch {

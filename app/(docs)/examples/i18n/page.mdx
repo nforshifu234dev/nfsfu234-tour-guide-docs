@@ -16,7 +16,7 @@ The library exposes all text as props, making it easy to integrate with any i18n
 'use client';
 
 import { useState } from 'react';
-import { Tour } from 'nfsfu234-tour-guide';
+import { Tour } from '@nfsfu234/tour-guide';
 
 const translations = {
   en: {
@@ -80,7 +80,7 @@ export default function I18nTour() {
 'use client';
 
 import { useTranslation } from 'react-i18next';
-import { Tour } from 'nfsfu234-tour-guide';
+import { Tour } from '@nfsfu234/tour-guide';
 
 export default function I18nTour() {
   const { t } = useTranslation('tour');
@@ -140,7 +140,7 @@ export default function I18nTour() {
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Tour } from 'nfsfu234-tour-guide';
+import { Tour } from '@nfsfu234/tour-guide';
 
 export default function NextIntlTour() {
   const t = useTranslations('Tour');
@@ -179,7 +179,7 @@ For Arabic, Hebrew, and other RTL languages:
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Tour } from 'nfsfu234-tour-guide';
+import { Tour } from '@nfsfu234/tour-guide';
 
 export default function RTLTour() {
   const [isRTL, setIsRTL] = useState(false);

@@ -1,0 +1,63 @@
+---
+title: What's New
+description: Latest updates to NFSFU234TourGuide — package rename and new project-wide config support.
+keywords: [whats new, updates, changelog, nfsfu234 open source day, tour guide]
+---
+
+# What's New
+
+Latest updates to **NFSFU234TourGuide**. For the full commit-level history, see the [Changelog](/changelog).
+
+---
+
+## 📦 The package moved to `@nfsfu234/tour-guide`
+
+As part of **NFSFU234 Open Source Day**, this library now publishes under the `@nfsfu234` scope, alongside [`@nfsfu234/form-validation`](https://form-validation.nforshifu234dev.com) and [`@nfsfu234/shotsweep`](https://shotsweep.nforshifu234dev.com).
+
+```diff
+- npm install nfsfu234-tour-guide
++ npm install @nfsfu234/tour-guide
+```
+
+```diff
+- import { Tour } from 'nfsfu234-tour-guide'
++ import { Tour } from '@nfsfu234/tour-guide'
+```
+
+Nothing about the API changed — this is a rename only. If you're upgrading, see the [Migration Guide](/migration) for the full checklist.
+
+---
+
+## ⚙️ Project-wide config with `defineConfig()` + `TourProvider`
+
+Running more than one tour in your app? You can now set shared defaults once — `theme`, `accentColor`, `buttonLabels`, `showBranding` — instead of repeating them on every `<Tour>`.
+
+```ts filename="tour.config.ts"
+// tour.config.ts
+import { defineConfig } from '@nfsfu234/tour-guide';
+
+export default defineConfig({
+  theme: 'dark',
+  accentColor: '#10b981',
+  showBranding: false,
+});
+```
+
+```tsx filename="app/layout.tsx"
+// app/layout.tsx
+import { TourProvider } from '@nfsfu234/tour-guide';
+import tourConfig from '../tour.config';
+
+export default function RootLayout({ children }) {
+  return <TourProvider config={tourConfig}>{children}</TourProvider>;
+}
+```
+
+Any prop passed directly to a specific `<Tour>` still overrides the shared config — nothing gets locked in. See [Project-Wide Config](/project-config) for the full reference.
+
+---
+
+## Upgrading?
+
+- New install → just [get started](/getting-started).
+- Coming from `nfsfu234-tour-guide` v0.x or v1.0.x → follow the [Migration Guide](/migration).

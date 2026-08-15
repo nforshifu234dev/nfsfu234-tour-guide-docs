@@ -1,6 +1,6 @@
 ---
 title: API Reference
-description: Complete props, types, and configuration options for nfsfu234-tour-guide.
+description: Complete props, types, and configuration options for NFSFU234TourGuide.
 keywords: [api reference, props, types, configuration, TourStep, ThemeConfig]
 ---
 
@@ -27,6 +27,8 @@ const steps = [
   },
 ];
 ```
+
+> Running multiple tours that share some step content? See [Sharing Steps Across Tours](/configuration#sharing-steps-across-tours).
 
 #### `isActive`
 - **Type:** `boolean`
@@ -173,7 +175,7 @@ interface ButtonLabels {
 
 #### `tourId`
 - **Type:** `string`
-- **Default:** `'nfsfu234-tour-guide'`
+- **Default:** `'tour-guide'`
 - **Description:** Unique identifier for the tour
 
 ```tsx
@@ -348,7 +350,7 @@ interface ButtonLabels {
 ## Complete Example
 
 ```tsx
-import { Tour } from 'nfsfu234-tour-guide';
+import { Tour } from '@nfsfu234/tour-guide';
 
 export default function MyApp() {
   const [showTour, setShowTour] = useState(true);
@@ -413,7 +415,7 @@ export default function MyApp() {
 All interfaces are exported for TypeScript users:
 
 ```tsx
-import { Tour, Types } from 'nfsfu234-tour-guide';
+import { Tour, Types } from '@nfsfu234/tour-guide';
 
 // Use types via the Types namespace:
 const steps: Types.TourStep[] = [

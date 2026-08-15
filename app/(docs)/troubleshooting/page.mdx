@@ -1,6 +1,6 @@
 ---
 title: Troubleshooting
-description: Fix common issues with nfsfu234-tour-guide setup and usage.
+description: Fix common issues with NFSFU234 Tour Guide setup and usage.
 keywords: [troubleshooting, fixes, errors, common problems, debug]
 ---
 
@@ -13,7 +13,7 @@ Common issues and solutions for **NFSFU234TourGuide**.
 ## Installation Issues
 
 ### Package Not Found
-**Error:** `npm ERR! 404 Not Found - GET https://registry.npmjs.org/nfsfu234-tour-guide`
+**Error:** `npm ERR! 404 Not Found - GET https://registry.npmjs.org/@nfsfu234/tour-guide`
 
 **Solution:**
 ```bash
@@ -21,7 +21,7 @@ Common issues and solutions for **NFSFU234TourGuide**.
 npm cache clean --force
 
 # Try again
-npm install nfsfu234-tour-guide
+npm install @nfsfu234/tour-guide
 ```
 
 ### Peer Dependency Warnings
@@ -30,10 +30,10 @@ npm install nfsfu234-tour-guide
 **Solution:**
 ```bash
 # Use legacy peer deps (npm 7+)
-npm install nfsfu234-tour-guide --legacy-peer-deps
-
+npm install @nfsfu234/tour-guide --legacy-peer-deps
+```
 # Or force install
-npm install nfsfu234-tour-guide --force
+npm install @nfsfu234/tour-guide --force
 ```
 
 ---
@@ -244,17 +244,17 @@ export default function MyTour() {
 npm install @types/react@latest
 
 # Or import types explicitly
-import Tour, { TourProps } from 'nfsfu234-tour-guide';
+import Tour, { TourProps } from '@nfsfu234/tour-guide';
 ```
 
 ### Module Not Found
-**Error:** `Cannot find module 'nfsfu234-tour-guide'`
+**Error:** `Cannot find module '@nfsfu234/tour-guide'`
 
 **Solution:**
 ```tsx
 // Make sure path is correct
-import { Tour } from 'nfsfu234-tour-guide'; // ✅
-import Tour from 'nfsfu234-tour-guide/dist'; // ❌
+import { Tour } from '@nfsfu234/tour-guide'; // ✅
+import Tour from '@nfsfu234/tour-guide/dist'; // ❌
 ```
 
 ---
@@ -269,7 +269,7 @@ import Tour from 'nfsfu234-tour-guide/dist'; // ❌
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Tour } from 'nfsfu234-tour-guide';
+import { Tour } from '@nfsfu234/tour-guide';
 
 export default function MyTour() {
   const [showTour, setShowTour] = useState(false);
@@ -312,7 +312,7 @@ useEffect(() => {
    ```tsx
    // Preload tour on page load
    useEffect(() => {
-     import('nfsfu234-tour-guide'); // Preload
+     import('@nfsfu234/tour-guide'); // Preload
    }, []);
    ```
 
@@ -416,7 +416,7 @@ Look for errors or warnings:
 ### Minimal Reproduction
 Create a minimal example:
 ```tsx
-import { Tour } from 'nfsfu234-tour-guide';
+import { Tour } from '@nfsfu234/tour-guide';
 
 export default function Test() {
   const steps = [{ target: '#test', content: 'Test' }];
@@ -440,7 +440,7 @@ If you're still stuck:
 3. **Report a bug:** [New Issue](https://github.com/nforshifu234dev/nfsfu234-tour-guide/issues/new)
 
 **When reporting, include:**
-- Library version (`npm list nfsfu234-tour-guide`)
+- Library version (`npm list @nfsfu234/tour-guide`)
 - React version
 - Browser & OS
 - Code example

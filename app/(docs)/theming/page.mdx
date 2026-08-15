@@ -1,0 +1,163 @@
+---
+title: Theming
+description: Built-in themes, accent colors, and full custom theme configuration for NFSFU234TourGuide.
+keywords: [theming, customTheme, ThemeConfig, dark theme, light theme, custom colors]
+---
+
+# Theming
+
+**NFSFU234TourGuide** ships with dark and light presets, an `accentColor` shortcut for quick branding, and a full `customTheme` system for complete control.
+
+---
+
+## Built-In Presets
+
+```tsx
+<Tour theme="dark" steps={steps} />   // Default
+<Tour theme="light" steps={steps} />  // Light background
+```
+
+| Theme | Backdrop | Tooltip BG | Text |
+|-------|----------|-----------|------|
+| `dark` (default) | `rgba(0,0,0,0.75)` | `#18181b` | `#fafafa` |
+| `light` | `rgba(0,0,0,0.4)` | `#ffffff` | `#18181b` |
+
+---
+
+## Accent Color
+
+The fastest way to match your brand — controls the progress bar, primary buttons, and highlight ring, without touching the rest of the palette.
+
+```tsx
+<Tour accentColor="#10b981" steps={steps} />  // Emerald (default)
+<Tour accentColor="#3b82f6" steps={steps} />  // Blue
+<Tour accentColor="#a855f7" steps={steps} />  // Purple
+<Tour accentColor="#ef4444" steps={steps} />  // Red
+```
+
+Works with both `theme="dark"` and `theme="light"` — you don't need `theme="custom"` just to change the accent.
+
+---
+
+## Full Custom Themes
+
+For complete control over every color, set `theme="custom"` and pass a `customTheme` object.
+
+> `theme="custom"` is required for `customTheme` to take effect — it's a common mistake to pass `customTheme` while `theme` is still `"dark"` or `"light"`.
+
+### `ThemeConfig` Interface
+
+| Property | Type | Description |
+|----------|------|--------------|
+| `backdrop` | `string` | Overlay background color |
+| `tooltipBg` | `string` | Tooltip background color |
+| `tooltipText` | `string` | Tooltip text color |
+| `tooltipBorder` | `string` | Tooltip border color |
+| `buttonBg` | `string` | Secondary button background |
+| `buttonText` | `string` | Secondary button text color |
+| `progressBar` | `string` | Progress bar track color |
+| `highlightRing` | `string` | Glow ring color around target element |
+
+### Example: Purple Theme
+
+This is the "purple" preset used in the interactive demo on the homepage:
+
+```tsx
+<Tour
+  theme="custom"
+  customTheme={{
+    backdrop: 'rgba(0, 0, 0, 0.85)',
+    tooltipBg: '#0d0019',
+    tooltipText: '#faf5ff',
+    tooltipBorder: '#4c1d95',
+    buttonBg: '#1a0035',
+    buttonText: '#faf5ff',
+    progressBar: '#3b0764',
+    highlightRing: 'rgba(168, 85, 247, 0.5)',
+  }}
+  accentColor="#a855f7"
+  steps={steps}
+/>
+```
+
+### Example: Matching a Design System
+
+```tsx
+<Tour
+  theme="custom"
+  customTheme={{
+    backdrop: 'rgba(0, 0, 0, 0.8)',
+    tooltipBg: '#1e293b',
+    tooltipText: '#f1f5f9',
+    tooltipBorder: '#475569',
+    buttonBg: '#334155',
+    buttonText: '#ffffff',
+    progressBar: '#475569',
+    highlightRing: 'rgba(99, 102, 241, 0.6)',
+  }}
+  accentColor="#6366f1"
+  steps={steps}
+/>
+```
+
+---
+
+## Dynamic Theme (Dark Mode Toggle)
+
+If your app already has a dark mode toggle, pass the resolved theme straight through:
+
+```tsx
+const { resolvedTheme } = useTheme(); // e.g. next-themes
+
+<Tour
+  key={resolvedTheme} // force remount so the theme applies immediately
+  theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
+  steps={steps}
+/>
+```
+
+The `key` prop matters here — without it, an already-mounted `<Tour>` won't pick up the new theme value on toggle.
+
+---
+
+## CSS Class Overrides
+
+For cases where `customTheme` isn't flexible enough (e.g. custom fonts, box-shadow, animation), you can also target class names directly:
+
+```tsx
+<Tour
+  overlayClassName="my-backdrop"
+  tooltipClassName="my-tooltip"
+  highlightClassName="my-highlight"
+  steps={steps}
+/>
+```
+
+`customTheme` is the recommended path for color — reach for class overrides only when you need non-color styling.
+
+---
+
+## Theming Across Multiple Tours
+
+If you're running several tours in one app, define your theme once in [Project-Wide Configuration](/configuration) instead of repeating it on every `<Tour>`:
+
+```ts filename="tour.config.ts"
+// tour.config.ts
+export default defineConfig({
+  theme: 'custom',
+  customTheme: {
+    tooltipBg: '#18181b',
+    tooltipText: '#fafafa',
+    // ...
+  },
+  accentColor: '#10b981',
+});
+```
+
+---
+
+## Related Pages
+
+- [Configuration](/configuration) — share theme settings across tours
+- [API Reference](/api-reference) — full `ThemeConfig` and prop list
+- [Troubleshooting](/troubleshooting#custom-theme-not-applying) — custom theme not applying

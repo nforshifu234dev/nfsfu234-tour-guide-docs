@@ -2,8 +2,43 @@
 
 @import "tailwindcss";
 
-
 @custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Site chrome palette — light mode */
+  --tg-bg: #ffffff;
+  --tg-bg-alt: #f7f7f8;
+  --tg-bg-raised: #f4f4f5;
+  --tg-bg-raised-2: #e4e4e7;
+  --tg-text: #18181b;
+  --tg-text-soft: #3f3f46;
+  --tg-text-muted: #52525b;
+  --tg-text-mute-2: #71717a;
+  --tg-text-mute-3: #94949c;
+  --tg-border: rgba(0, 0, 0, 0.08);
+  --tg-border-strong: rgba(0, 0, 0, 0.14);
+  --tg-surface-soft: rgba(0, 0, 0, 0.03);
+  --tg-glow: rgba(16, 185, 129, 0.1);
+  --tg-accent: #059669;
+}
+
+.dark {
+  /* Site chrome palette — dark mode */
+  --tg-bg: #09090b;
+  --tg-bg-alt: #070709;
+  --tg-bg-raised: #111113;
+  --tg-bg-raised-2: #19191c;
+  --tg-text: #fafafa;
+  --tg-text-soft: #e4e4e7;
+  --tg-text-muted: #a1a1aa;
+  --tg-text-mute-2: #71717a;
+  --tg-text-mute-3: #52525b;
+  --tg-border: rgba(255, 255, 255, 0.06);
+  --tg-border-strong: rgba(255, 255, 255, 0.1);
+  --tg-surface-soft: rgba(255, 255, 255, 0.04);
+  --tg-glow: rgba(16, 185, 129, 0.15);
+  --tg-accent: #10b981;
+}
 
 * {
   box-sizing: border-box;

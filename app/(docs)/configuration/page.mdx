@@ -1,0 +1,258 @@
+---
+title: Configuration
+description: Set shared defaults for all your tours with defineConfig() and TourProvider.
+keywords: [defineConfig, TourProvider, configuration, project-wide config, shared defaults]
+---
+
+# Project-Wide Configuration
+
+If your app runs more than one tour — onboarding, a feature announcement, a settings walkthrough — you don't have to repeat `theme`, `accentColor`, `buttonLabels`, and other shared props on every `<Tour>` instance.
+
+`defineConfig()` and `<TourProvider>` let you set those defaults **once**, at your app root.
+
+> **New in v1.1.0.** If you're upgrading from an earlier version, this is additive — nothing about existing `<Tour>` usage breaks. See [What's New](/whats-new) and the [Migration Guide](/migration).
+
+---
+
+## Quick Setup
+
+### Step 1: Define your config
+
+```ts filename="tour.config.ts"
+// tour.config.ts
+import { defineConfig } from '@nfsfu234/tour-guide';
+
+export default defineConfig({
+  theme: 'dark',
+  accentColor: '#10b981',
+  showBranding: false,
+});
+```
+
+### Step 2: Wrap your app in `TourProvider`
+
+```tsx filename="app/layout.tsx"
+// app/layout.tsx
+import { TourProvider } from '@nfsfu234/tour-guide';
+import tourConfig from '../tour.config';
+
+export default function RootLayout({ children }) {
+  return (
+    <TourProvider config={tourConfig}>
+      {children}
+    </TourProvider>
+  );
+}
+```
+
+### Step 3: Use `<Tour>` anywhere in the tree
+
+```tsx
+'use client';
+
+import { Tour } from '@nfsfu234/tour-guide';
+
+export default function OnboardingTour() {
+  // theme, accentColor, and showBranding are inherited from TourProvider
+  return <Tour steps={steps} />;
+}
+```
+
+No config props needed at the call site — they're already set.
+
+---
+
+## `defineConfig()`
+
+- **Type:** `(config: TourConfig) => TourConfig`
+- **Description:** A typed helper for building your shared config object. Purely for type inference and editor autocomplete — it returns the object you pass in unchanged.
+
+```ts
+import { defineConfig } from '@nfsfu234/tour-guide';
+
+export default defineConfig({
+  theme: 'dark',
+  accentColor: '#10b981',
+  showProgress: true,
+  showBranding: false,
+  buttonLabels: {
+    next: 'Continue →',
+    previous: '← Back',
+    skip: 'Skip Tour',
+    finish: 'Done! 🎉',
+  },
+});
+```
+
+**`TourConfig` accepts any shared/global-friendly `Tour` prop**, including:
+
+| Prop | Type |
+|------|------|
+| `theme` | `'light' \| 'dark' \| 'custom'` |
+| `customTheme` | `ThemeConfig` |
+| `accentColor` | `string` |
+| `showProgress` | `boolean` |
+| `showBranding` | `boolean` |
+| `buttonLabels` | `ButtonLabels` |
+| `welcomeScreen` | `WelcomeScreenConfig` |
+
+See [Theming](/theming) for the full `ThemeConfig` reference and [API Reference](/api-reference) for the rest.
+
+---
+
+## `<TourProvider>`
+
+- **Props:** `config: TourConfig`, `children: ReactNode`
+- **Description:** Makes the config available to every `<Tour>` rendered anywhere in its subtree via React context. Doesn't render any UI of its own.
+
+```tsx
+<TourProvider config={tourConfig}>
+  {children}
+</TourProvider>
+```
+
+You typically mount this once, at the root of your app (`app/layout.tsx` in Next.js App Router, or your top-level `App.tsx`).
+
+---
+
+## Override Precedence
+
+Per-instance props always win. `TourProvider` only fills in what you *don't* specify on a given `<Tour>`.
+
+```tsx
+// TourProvider config: { theme: 'dark', accentColor: '#10b981' }
+
+<Tour steps={steps} />
+// → theme: 'dark', accentColor: '#10b981' (from provider)
+
+<Tour steps={steps} accentColor="#a855f7" />
+// → theme: 'dark' (from provider), accentColor: '#a855f7' (overridden)
+```
+
+This means you can set sane app-wide defaults and still customize a one-off tour (e.g., a purple-accented feature announcement) without touching the shared config.
+
+---
+
+## Multiple Tours, One Config
+
+This is the main use case for `TourProvider` — reusing one visual identity across several independent tours:
+
+```tsx filename="tour.config.ts"
+// tour.config.ts
+export default defineConfig({
+  theme: 'dark',
+  accentColor: '#10b981',
+  showBranding: false,
+});
+```
+
+```tsx
+// Onboarding tour — inherits config
+<Tour tourId="onboarding" steps={onboardingSteps} />
+
+// Feature announcement — inherits config, overrides welcomeScreen
+<Tour
+  tourId="new-feature"
+  steps={featureSteps}
+  welcomeScreen={{ enabled: false }}
+/>
+
+// Settings walkthrough — inherits config, overrides accentColor only
+<Tour
+  tourId="settings-tour"
+  steps={settingsSteps}
+  accentColor="#3b82f6"
+/>
+```
+
+---
+
+## Sharing Steps Across Tours
+
+`TourProvider` only shares **presentation** config (`theme`, `accentColor`, `buttonLabels`, etc.) — it does not share `steps`. Each `<Tour>` always needs its own `steps` array, because step content is specific to that tour, not something that should silently default from elsewhere.
+
+> If you forget `steps` on a `<Tour>`, you want that to fail loudly — not quietly inherit another tour's content. This is why `steps` isn't part of `defineConfig()`.
+
+That said, it's common for two tours to share *individual* steps — for example, a "manage your profile" step that appears both in first-time onboarding and in a later feature-announcement tour. You can do this today with plain TypeScript, no extra API needed: extract the shared step into its own file and import it wherever it's used.
+
+### Example
+
+```ts filename="tour-steps/shared.ts"
+// tour-steps/shared.ts
+import type { TourStep } from '@nfsfu234/tour-guide';
+
+export const profileStep: TourStep = {
+  target: '#profile',
+  content: 'Manage your account and preferences here.',
+};
+
+export const notificationsStep: TourStep = {
+  target: '#notifications',
+  content: 'Control what you get notified about.',
+};
+```
+
+```ts filename="tour-steps/onboarding.ts"
+// tour-steps/onboarding.ts
+import type { TourStep } from '@nfsfu234/tour-guide';
+import { profileStep, notificationsStep } from './shared';
+
+export const onboardingSteps: TourStep[] = [
+  { target: '#welcome', content: 'Welcome to the app!' },
+  profileStep,
+  notificationsStep,
+  { target: '#dashboard', content: 'This is your dashboard.' },
+];
+```
+
+```ts filename="tour-steps/whats-new.ts"
+// tour-steps/whats-new.ts
+import type { TourStep } from '@nfsfu234/tour-guide';
+import { notificationsStep } from './shared';
+
+export const whatsNewSteps: TourStep[] = [
+  { target: '#new-feature', content: 'Check out this new feature!' },
+  notificationsStep, // reused — notification settings changed recently
+];
+```
+
+```tsx
+import { Tour } from '@nfsfu234/tour-guide';
+import { onboardingSteps } from '@/tour-steps/onboarding';
+import { whatsNewSteps } from '@/tour-steps/whats-new';
+
+<Tour tourId="onboarding" steps={onboardingSteps} />
+<Tour tourId="whats-new" steps={whatsNewSteps} />
+```
+
+Both tours can sit under the same `<TourProvider>` for shared theming, while keeping their step content — and any reused individual steps — fully independent and explicit.
+
+```tsx
+<TourProvider config={tourConfig}>
+  <Tour tourId="onboarding" steps={onboardingSteps} />
+  <Tour tourId="whats-new" steps={whatsNewSteps} />
+</TourProvider>
+```
+
+---
+
+## Without `TourProvider`
+
+`TourProvider` is entirely optional. If you only run a single tour, or prefer explicit props everywhere, keep using `<Tour>` on its own — nothing here is required:
+
+```tsx
+<Tour
+  steps={steps}
+  theme="dark"
+  accentColor="#10b981"
+/>
+```
+
+---
+
+## Related Pages
+
+- [Theming](/theming) — `ThemeConfig` reference and custom theme examples
+- [API Reference](/api-reference) — full prop list
+- [What's New](/whats-new) — release notes for v1.1.0
+- [Migration Guide](/migration) — upgrading from earlier versions
