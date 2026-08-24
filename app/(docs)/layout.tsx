@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 import { Banner } from 'nextra/components'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://tour-guide.nforshifu234dev.com'),
+  metadataBase: new URL('https://tourguide.nforshifu234dev.com'),
   title: {
     default: 'NFSFU234TourGuide',
     template: '%s – NFSFU234TourGuide',  // "Getting Started – NFSFU234TourGuide"

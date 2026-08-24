@@ -227,7 +227,7 @@ export default async function Image() {
             letterSpacing: '0.02em',
           }}>
             <span style={{ color: '#10b981', opacity: 0.5 }}>🌐</span>
-            tour-guide.nforshifu234dev.com
+            tourguide.nforshifu234dev.com
           </div>
         </div>
       </div>

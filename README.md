@@ -2,7 +2,7 @@
 
 Official documentation site for [nfsfu234-tour-guide](https://github.com/nforshifu234dev/nfsfu234-tour-guide).
 
-🌐 **Live site:** [tour-guide.nforshifu234dev.com](https://tour-guide.nforshifu234dev.com)
+🌐 **Live site:** [tourguide.nforshifu234dev.com](https://tourguide.nforshifu234dev.com)
 
 ---
 
@@ -48,7 +48,7 @@ config/
 ## 🛠️ Built With
 
 - [Next.js 15](https://nextjs.org/) — React framework
-- [Nextra v4](https://nextra.site/) — Documentation framework  
+- [Nextra v4](https://nextra.site/) — Documentation framework
 - [Tailwind CSS v4](https://tailwindcss.com/) — Styling
 - [MDX](https://mdxjs.com/) — Markdown + JSX
 
@@ -77,13 +77,13 @@ If you'd like to update badge copy, styling, or the destination URL, edit:
 components/Tour/Branding.tsx   # (or wherever the badge lives in the lib source)
 ```
 
-The badge links to `https://tour-guide.nforshifu234dev.com` — keep that URL stable so existing installs continue to resolve correctly.
+The badge links to `https://tourguide.nforshifu234dev.com` — keep that URL stable so existing installs continue to resolve correctly.
 
 ---
 
 ## 🚢 Deployment
 
-Deployed on Vercel, served via `tour-guide.nforshifu234dev.com` (Cloudflare DNS → Vercel).
+Deployed on Vercel, served via `tourguide.nforshifu234dev.com` (Cloudflare DNS → Vercel).
 
 ---
 
