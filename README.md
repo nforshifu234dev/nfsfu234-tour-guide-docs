@@ -6,6 +6,8 @@ Official documentation site for [nfsfu234-tour-guide](https://github.com/nforshi
 
 ---
 
+---
+
 ## 🚀 Development
 
 ```bash
@@ -84,6 +86,8 @@ The badge links to `https://tourguide.nforshifu234dev.com` — keep that URL sta
 ## 🚢 Deployment
 
 Deployed on Vercel, served via `tourguide.nforshifu234dev.com` (Cloudflare DNS → Vercel).
+
+---
 
 ---
 
