@@ -4,18 +4,10 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { useLatestVersion } from '@/hooks/useLatestVersion'
 
 export default function Footer() {
-  const [version, setVersion] = useState('1.0.1') // fallback
-
-  useEffect(() => {
-    fetch('https://registry.npmjs.org/nfsfu234-tour-guide/latest')
-      .then(res => res.json())
-      .then(data => {
-        if (data?.version) setVersion(data.version)
-      })
-      .catch(() => {}) // silent fail
-  }, [])
+  const version = useLatestVersion()
 
   return (
     <footer style={{
@@ -48,7 +40,7 @@ export default function Footer() {
             marginBottom: '1.5rem',
           }}>
             <span style={{ color: '#3f3f46', fontSize: '12px', fontFamily: 'monospace' }}>$</span>
-            <code style={{ fontSize: '12px', color: '#a1a1aa', fontFamily: 'monospace' }}>npm i nfsfu234-tour-guide</code>
+            <code style={{ fontSize: '12px', color: '#a1a1aa', fontFamily: 'monospace' }}>npm i @nfsfu234/tour-guide</code>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             <a href="https://github.com/nforshifu234dev/nfsfu234-tour-guide" target="_blank" style={{
@@ -110,7 +102,7 @@ export default function Footer() {
               { label: 'FAQ', href: '/faq' },
               { label: 'Troubleshooting', href: '/troubleshooting' },
               { label: 'Contributing', href: '/contributing' },
-              { label: 'npm Package', href: 'https://www.npmjs.com/package/nfsfu234-tour-guide', external: true },
+              { label: 'npm Package', href: 'https://www.npmjs.com/package/@nfsfu234/tour-guide', external: true },
               { label: 'GitHub Repo', href: 'https://github.com/nforshifu234dev/nfsfu234-tour-guide', external: true },
             ].map(link => (
               <a key={link.label} href={link.href} target={link.external ? '_blank' : undefined} style={{
@@ -128,7 +120,7 @@ export default function Footer() {
             NFORSHIFU234 Dev
           </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <a href="https://nforshifu234dev.com" target="_blank" style={{
+            <a href="https://www.nforshifu234dev.com" target="_blank" style={{
               fontSize: '13px', color: '#10b981', fontWeight: 600, textDecoration: 'none',
             }}>
               nforshifu234dev.com ↗

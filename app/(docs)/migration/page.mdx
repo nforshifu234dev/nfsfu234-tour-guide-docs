@@ -25,11 +25,11 @@ This guide helps you upgrade from `nfsfu234-tour-guide` v0.2.x to v1.0.
 ## 📦 Installation
 
 ```bash
-npm install nfsfu234-tour-guide@latest
+npm install @nfsfu234/tour-guide@latest
 # or
-yarn add nfsfu234-tour-guide@latest
+yarn add @nfsfu234/tour-guide@latest
 # or
-pnpm add nfsfu234-tour-guide@latest
+pnpm add @nfsfu234/tour-guide@latest
 ```
 
 ---
@@ -126,7 +126,8 @@ npm uninstall framer-motion lucide-react
 
 ### Step 1: Update Package
 ```bash
-npm install nfsfu234-tour-guide@latest
+npm uninstall nfsfu234-tour-guide
+npm install @nfsfu234/tour-guide@latest
 ```
 
 ### Step 2: Update Props
@@ -190,7 +191,7 @@ const steps = [
 
 ## ✅ Migration Checklist
 
-- [ ] `npm install nfsfu234-tour-guide@latest`
+- [ ] `npm install @nfsfu234/tour-guide@latest`
 - [ ] Replace `tourDots` → `showProgress`
 - [ ] Remove `animation` and `animationDuration`
 - [ ] Update custom styling to use `customTheme`

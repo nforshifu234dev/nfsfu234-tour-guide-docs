@@ -1,12 +1,13 @@
 // app\(docs)\layout.tsx
 import FooterDocs from '@/components/layout/Footer/FooterDocs'
-import { Footer, Layout, Navbar } from 'nextra-theme-docs'
+import {  Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { getPageMap } from 'nextra/page-map'
 import Image from 'next/image'
 import type { Metadata } from 'next'
+import { Banner } from 'nextra/components'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://nfsfu234-tour-guide.nforshifu234dev.com'), // ← your actual domain
+  metadataBase: new URL('https://tourguide.nforshifu234dev.com'),
   title: {
     default: 'NFSFU234TourGuide',
     template: '%s – NFSFU234TourGuide',  // "Getting Started – NFSFU234TourGuide"
@@ -26,10 +27,21 @@ export default async function DocsLayout({
 }: {
   children: React.ReactNode
 }) {
-  const pageMap = await getPageMap()
+  const pageMap = await getPageMap();
+
+  const banner = (
+    <Banner storageKey="nfsfu234-tour-guide-scope-2026">
+      🎉 Now published as <code>@nfsfu234/tour-guide</code> {' '}
+      project-wide config support —{' '}
+      <a href="/whats-new" style={{ textDecoration: 'underline' }}>
+        see what's new →
+      </a>
+    </Banner>
+  )
 
   return (
     <Layout
+      banner={banner}
       navbar={
         <Navbar
           logo={
@@ -37,7 +49,7 @@ export default async function DocsLayout({
             <span style={{ fontSize: '22px' }}>
               <Image src="/favicon.svg" alt="NFSFU234TourGuide" width={34} height={34} />
             </span>
-            <span style={{ fontWeight: 800, fontSize: '16px', color: '#fafafa' }}>NFSFU234TourGuide</span>
+            <span style={{ fontWeight: 800, fontSize: '16px', }}>nfsfu234/ <span>tour-guide</span> </span>
           </div>
           }
           projectLink="https://github.com/nforshifu234dev/nfsfu234-tour-guide"
@@ -45,12 +57,11 @@ export default async function DocsLayout({
       }
       pageMap={pageMap}
       docsRepositoryBase="https://github.com/nforshifu234dev/nfsfu234-tour-guide-docs/tree/main"
-    //   footer={<Footer>MIT {new Date().getFullYear()} © NFSFU234TourGuide</Footer>}
       footer={<FooterDocs />}
       editLink="Edit this page on GitHub →"
       sidebar={{ defaultMenuCollapseLevel: 1, toggleButton: true }}
       toc={{ backToTop: true }}
-    //   timestamp={true}   // ← add this line
+      // timestamp={true}   // ← add this line
 
     >
       {children}

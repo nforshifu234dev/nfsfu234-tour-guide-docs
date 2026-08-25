@@ -1,0 +1,229 @@
+---
+title: Project-Wide Config
+description: Share theme, accent color, and branding across multiple tours with defineConfig() and TourProvider.
+keywords: [defineConfig, TourProvider, project config, multiple tours, shared theme]
+---
+
+# Project-Wide Config Example
+
+A realistic setup for an app running **more than one tour** — onboarding, a settings walkthrough, and a feature announcement — all sharing the same visual identity via `defineConfig()` and `<TourProvider>`.
+
+> New in v1.1.0. See [Configuration](/configuration) for the full reference, and [What's New](/whats-new) if you're upgrading from an earlier version.
+
+---
+
+## The Problem This Solves
+
+Without shared config, every `<Tour>` repeats the same theme props:
+
+```tsx
+// ❌ Repetitive — theme/accentColor duplicated on every tour
+<Tour steps={onboardingSteps} theme="dark" accentColor="#10b981" showBranding={false} />
+<Tour steps={settingsSteps} theme="dark" accentColor="#10b981" showBranding={false} />
+<Tour steps={featureSteps} theme="dark" accentColor="#10b981" showBranding={false} />
+```
+
+If you rebrand later, that's three (or ten) places to update, and it's easy for one to drift out of sync.
+
+---
+
+## Step 1: Define Shared Config
+
+```ts filename="tour.config.ts"
+// tour.config.ts
+import { defineConfig } from '@nfsfu234/tour-guide';
+
+export default defineConfig({
+  theme: 'dark',
+  accentColor: '#10b981',
+  showBranding: false,
+  buttonLabels: {
+    next: 'Next →',
+    previous: '← Back',
+    skip: 'Skip',
+    finish: 'Done! 🎉',
+  },
+});
+```
+
+## Step 2: Wrap the App
+
+```tsx filename="app/layout.tsx"
+// app/layout.tsx
+import { TourProvider } from '@nfsfu234/tour-guide';
+import tourConfig from '../tour.config';
+
+export default function RootLayout({ children }) {
+  return (
+    <TourProvider config={tourConfig}>
+      {children}
+    </TourProvider>
+  );
+}
+```
+
+## Step 3: Define Each Tour's Steps
+
+Steps are **not** shared via config — each tour keeps its own content. See [Sharing Steps Across Tours](/configuration#sharing-steps-across-tours) if some steps genuinely repeat between tours.
+
+```tsx filename="components/OnboardingTour.tsx"
+// components/OnboardingTour.tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Tour } from '@nfsfu234/tour-guide';
+
+export default function OnboardingTour() {
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const seen = localStorage.getItem('onboarding_completed') === 'true';
+    if (!seen) {
+      const timer = setTimeout(() => setIsActive(true), 100);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleDone = () => {
+    localStorage.setItem('onboarding_completed', 'true');
+    setIsActive(false);
+  };
+
+  const steps = [
+    { target: '#dashboard', content: 'This is your dashboard.' },
+    { target: '#create-project', content: 'Create your first project here.' },
+  ];
+
+  // No theme, accentColor, or buttonLabels here — inherited from TourProvider
+  return (
+    <Tour
+      tourId="onboarding"
+      isActive={isActive}
+      steps={steps}
+      onComplete={handleDone}
+      onSkip={handleDone}
+    />
+  );
+}
+```
+
+```tsx filename="components/SettingsTour.tsx"
+// components/SettingsTour.tsx
+'use client';
+
+import { useState } from 'react';
+import { Tour } from '@nfsfu234/tour-guide';
+
+export default function SettingsTour() {
+  const [isActive, setIsActive] = useState(false);
+
+  const steps = [
+    { target: '#profile-settings', content: 'Update your profile here.' },
+    { target: '#notification-settings', content: 'Control what you get notified about.' },
+  ];
+
+  return (
+    <>
+      <button onClick={() => setIsActive(true)}>Show me around settings</button>
+      <Tour
+        tourId="settings-tour"
+        isActive={isActive}
+        steps={steps}
+        onComplete={() => setIsActive(false)}
+        onSkip={() => setIsActive(false)}
+      />
+    </>
+  );
+}
+```
+
+```tsx filename="components/FeatureAnnouncementTour.tsx"
+// components/FeatureAnnouncementTour.tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Tour } from '@nfsfu234/tour-guide';
+
+const CURRENT_VERSION = '2.0.0';
+
+export default function FeatureAnnouncementTour() {
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const lastSeen = localStorage.getItem('last_seen_version');
+    if (lastSeen !== CURRENT_VERSION) {
+      setIsActive(true);
+    }
+  }, []);
+
+  const steps = [
+    { target: '#ai-assistant', content: '🤖 New: try our AI assistant.' },
+  ];
+
+  // Overrides accentColor for this one tour, everything else still inherited
+  return (
+    <Tour
+      tourId="whats-new-2-0"
+      isActive={isActive}
+      steps={steps}
+      accentColor="#a855f7"
+      welcomeScreen={{ enabled: false }}
+      onComplete={() => {
+        localStorage.setItem('last_seen_version', CURRENT_VERSION);
+        setIsActive(false);
+      }}
+      onSkip={() => {
+        localStorage.setItem('last_seen_version', CURRENT_VERSION);
+        setIsActive(false);
+      }}
+    />
+  );
+}
+```
+
+## Step 4: Mount Them
+
+```tsx filename="app/dashboard/page.tsx"
+// app/dashboard/page.tsx
+import OnboardingTour from '@/components/OnboardingTour';
+import SettingsTour from '@/components/SettingsTour';
+import FeatureAnnouncementTour from '@/components/FeatureAnnouncementTour';
+
+export default function DashboardPage() {
+  return (
+    <>
+      <OnboardingTour />
+      <FeatureAnnouncementTour />
+
+      <div id="dashboard">{/* ... */}</div>
+      <button id="create-project">Create Project</button>
+
+      <div id="profile-settings">{/* ... */}</div>
+      <div id="notification-settings">{/* ... */}</div>
+      <SettingsTour />
+
+      <div id="ai-assistant">{/* ... */}</div>
+    </>
+  );
+}
+```
+
+---
+
+## What Each Tour Inherits vs Overrides
+
+| Tour | theme | accentColor | showBranding | buttonLabels |
+|------|-------|-------------|---------------|--------------|
+| Onboarding | `dark` (inherited) | `#10b981` (inherited) | `false` (inherited) | inherited |
+| Settings | `dark` (inherited) | `#10b981` (inherited) | `false` (inherited) | inherited |
+| Feature Announcement | `dark` (inherited) | `#a855f7` (**overridden**) | `false` (inherited) | inherited |
+
+Per-instance props always win — see [Override Precedence](/configuration#override-precedence).
+
+---
+
+## Next Steps
+
+- [Configuration](/configuration) — full `defineConfig()` / `TourProvider` reference
+- [SaaS Onboarding](/examples/saas-onboarding) — single-tour production example with analytics
+- [Conditional Steps](/examples/conditional) — role/plan-based step filtering

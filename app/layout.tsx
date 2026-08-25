@@ -1,35 +1,6 @@
-// import type { Metadata } from 'next'
-// import 'nextra-theme-docs/style.css'
-// import './globals.css'
-
-// export const metadata: Metadata = {
-//   metadataBase: new URL('https://nfsfu234-tour-guide.nforshifu234dev.com'),
-//   title: 'NFSFU234TourGuide — Zero-dependency React Tour Guide',
-//   description: 'Beautiful product tours and onboarding flows. Zero dependencies, ~3-4kB gzipped.',
-//   openGraph: {
-//     title: 'NFSFU234TourGuide',
-//     description: 'Beautiful product tours and onboarding flows. Zero dependencies, ~3-4kB gzipped.',
-//     url: 'https://nfsfu234-tour-guide.nforshifu234dev.com',
-//     siteName: 'NFSFU234TourGuide',
-//     type: 'website',
-//   },
-//   twitter: {
-//     card: 'summary_large_image',
-//     title: 'NFSFU234TourGuide',
-//     description: 'Zero-dependency React tour guide library.',
-//   },
-// }
-
-// export default function RootLayout({ children }: { children: React.ReactNode }) {
-//   return (
-//     <html lang="en" suppressHydrationWarning>
-//       <body>{children}</body>
-//     </html>
-//   )
-// }
-
 import type { Metadata } from 'next'
 import Script from 'next/script'
+import { ThemeProvider } from 'next-themes'
 import { siteConfig } from '@/config/site'
 import 'nextra-theme-docs/style.css'
 import './globals.css'
@@ -71,24 +42,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        {/* GA4 — only loads in production */}
-        {process.env.NODE_ENV === 'production' && siteConfig.ga4 && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.ga4}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga4-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${siteConfig.ga4}');
-              `}
-            </Script>
-          </>
-        )}
-        {children}
+        {/*
+          Same defaults nextra-theme-docs uses internally (attribute="class",
+          defaultTheme="system", storageKey="theme"). The docs route already
+          gets an equivalent ThemeProvider bundled inside nextra's own Layout
+          component — this one at the root is what makes the homepage (which
+          has no theming of its own) actually respond to light/dark/system.
+          Matching storageKey means both stay in sync either way.
+        */}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="theme">
+          {/* GA4 — only loads in production */}
+          {process.env.NODE_ENV === 'production' && siteConfig.ga4 && (
+            <>
+              <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.ga4}`}
+                strategy="afterInteractive"
+              />
+              <Script id="ga4-init" strategy="afterInteractive">
+                {`
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${siteConfig.ga4}');
+                `}
+              </Script>
+            </>
+          )}
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )
