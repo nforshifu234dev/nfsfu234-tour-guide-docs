@@ -1,5 +1,11 @@
 [[redirects]]
-  from = "https://tour-guide.nforshifu234dev.com/*"
+  from = "https://nfsfu234-tour-guide.netlify.app/*"
   to = "https://tourguide.nforshifu234dev.com/:splat"
   status = 301
   force = true
+
+  [[redirects]]
+    from = "https://tour-guide.nforshifu234dev.com/*"
+    to = "https://tourguide.nforshifu234dev.com/:splat"
+    status = 301
+    force = true
